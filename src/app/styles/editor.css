@@ -1,0 +1,95 @@
+.writing-main {
+  min-width: 0;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: var(--page);
+}
+.writing-main:focus {
+  outline-offset: -4px;
+}
+.writing-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 24px;
+  border-bottom: 1px solid var(--outline-variant);
+}
+.format-bold {
+  font:
+    bold 18px Georgia,
+    serif;
+}
+.format-italic {
+  font:
+    italic 20px Georgia,
+    serif;
+}
+.toolbar-caption {
+  font:
+    italic 12px Georgia,
+    serif;
+  color: var(--on-surface-variant);
+  margin-left: auto;
+}
+.editor-scroll {
+  overflow: auto;
+  min-height: 0;
+  scrollbar-width: thin;
+}
+.manuscript-page {
+  max-width: 812px;
+  padding: 52px 56px 80px;
+  margin: auto;
+}
+.document-breadcrumb {
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  color: var(--on-surface-variant);
+}
+.manuscript-page h1 {
+  font:
+    400 38px/1.25 Georgia,
+    serif;
+  margin-top: 18px;
+  letter-spacing: -0.6px;
+}
+.document-kind {
+  font-size: 11px;
+  color: var(--on-surface-variant);
+  margin-top: 12px !important;
+  margin-bottom: 36px !important;
+}
+.writing-main .tiptap {
+  font:
+    19px/1.85 Georgia,
+    'Times New Roman',
+    serif;
+  min-height: 260px;
+  overflow-wrap: anywhere;
+}
+.writing-main .tiptap:focus {
+  outline: none;
+}
+.writing-main .tiptap:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 10px;
+  border-radius: 2px;
+}
+.writing-main .tiptap p {
+  margin-bottom: 1.2em;
+}
+.writing-main .tiptap ul,
+.writing-main .tiptap ol {
+  padding-left: 24px;
+}
+.writing-main .tiptap li p {
+  margin-bottom: 0.3em;
+}
+.editing-notice {
+  border-top: 1px solid var(--outline-variant);
+  padding-top: 18px;
+  margin-top: 44px !important;
+  font-size: 11px;
+  color: var(--on-surface-variant);
+}

@@ -1,0 +1,104 @@
+/* Baseline M3: ruoli colore semantici, scala tipografica, forme e stati locali. */
+:root {
+  font-family: system-ui, sans-serif;
+  font-synthesis: none;
+}
+body {
+  margin: 0;
+}
+* {
+  box-sizing: border-box;
+}
+.theme {
+  --primary: #6750a4;
+  --on-primary: #fff;
+  --secondary-container: #e8def8;
+  --on-secondary-container: #1d192b;
+  --surface: #fef7ff;
+  --surface-container: #f3edf7;
+  --on-surface: #1d1b20;
+  --on-surface-variant: #49454f;
+  --outline: #79747e;
+  --shape-medium: 12px;
+  --shape-large: 16px;
+  --shape-full: 999px;
+  --elevation-1: 0 1px 3px #0003;
+  min-height: 100dvh;
+  background: var(--surface);
+  color: var(--on-surface);
+  color-scheme: light;
+}
+.theme[data-theme='dark'] {
+  --primary: #d0bcff;
+  --on-primary: #381e72;
+  --secondary-container: #4a4458;
+  --on-secondary-container: #e8def8;
+  --surface: #141218;
+  --surface-container: #211f26;
+  --on-surface: #e6e0e9;
+  --on-surface-variant: #cac4d0;
+  --outline: #938f99;
+  color-scheme: dark;
+}
+button {
+  position: relative;
+  border: 0;
+  border-radius: var(--shape-full);
+  min-height: 44px;
+  background: transparent;
+  color: inherit;
+  font:
+    500 14px/20px system-ui,
+    sans-serif;
+  cursor: pointer;
+}
+button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+}
+button:hover::after {
+  opacity: 0.08;
+}
+button:active::after,
+button:focus-visible::after {
+  opacity: 0.12;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+button svg {
+  flex-shrink: 0;
+}
+
+.pwa-notice {
+  position: fixed;
+  z-index: 8;
+  right: 16px;
+  bottom: 110px;
+  max-width: min(440px, calc(100vw - 32px));
+  border-radius: 16px;
+  border: 1px solid #79747e;
+  padding: 12px;
+  background: #f3edf7;
+  color: #1d1b20;
+  box-shadow: 0 2px 12px #0003;
+  font:
+    13px/1.5 system-ui,
+    sans-serif;
+}
+.pwa-notice button {
+  background: #6750a4;
+  color: white;
+  padding: 8px 16px;
+  margin: 4px;
+}

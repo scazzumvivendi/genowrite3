@@ -1,0 +1,7 @@
+/* Styles locaux regroupés par responsabilité. */
+@import './styles/chrome.css';
+@import './styles/panels.css';
+@import './styles/editor.css';
+@import './styles/statistics.css';
+@import './styles/preferences.css';
+@import './styles/responsive.css';

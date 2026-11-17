@@ -1,0 +1,46 @@
+.preferences-dialog {
+  width: min(480px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  border: 1px solid var(--outline-variant);
+  border-radius: 24px;
+  padding: 24px;
+  color: var(--on-surface);
+  background: var(--surface-container);
+  box-shadow: 0 12px 40px #0004;
+}
+.preferences-dialog::backdrop {
+  background: #0006;
+}
+.preferences-dialog .panel-heading {
+  padding: 0;
+}
+.preferences-dialog p {
+  font-size: 13px;
+  margin: 16px 0;
+}
+.preferences-dialog fieldset {
+  border: 1px solid var(--outline);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 24px 0;
+}
+.theme-options {
+  display: flex;
+  gap: 8px;
+}
+.theme-options button {
+  padding: 0 24px;
+  border: 1px solid var(--outline);
+}
+.theme-options button[aria-pressed='true'] {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+  border-color: transparent;
+}
+.filled-button {
+  background: var(--primary);
+  color: var(--on-primary);
+  padding: 0 24px;
+  float: right;
+}

@@ -1,0 +1,234 @@
+import { readProject, type GenowriteDatabase } from '../../database/db';
+import type { ProjectSnapshot } from '../manuscript/model';
+import { validateSnapshot } from '../manuscript/validation';
+
+export interface ProjectBackup {
+  format: 'genowrite3';
+  version: 1;
+  exportedAt: string;
+  snapshot: ProjectSnapshot;
+}
+
+function record(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error('Oggetto JSON non valido.');
+  }
+  return value as Record<string, unknown>;
+}
+function strings(value: Record<string, unknown>, fields: string[]) {
+  for (const field of fields) {
+    if (typeof value[field] !== 'string') {
+      throw new Error(`Campo non valido: ${field}.`);
+    }
+  }
+}
+function identifiers(value: unknown) {
+  if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) {
+    throw new Error('Elenco di identificatori non valido.');
+  }
+}
+
+/** Prima si validano tutte le strutture, poi si autorizza una transazione. */
+export function parseBackup(text: string): ProjectBackup {
+  if (text.length > 100_000_000) {
+    throw new Error('Backup troppo grande (limite 100 MB).');
+  }
+  const backup = record(JSON.parse(text));
+  if (backup.format !== 'genowrite3' || backup.version !== 1) {
+    throw new Error('Formato o versione del backup non supportati.');
+  }
+  strings(backup, ['exportedAt']);
+  const snapshot = record(backup.snapshot);
+  const project = record(snapshot.project);
+  strings(project, [
+    'id',
+    'title',
+    'author',
+    'description',
+    'genre',
+    'createdAt',
+    'updatedAt',
+  ]);
+  const commonFields = ['id', 'projectId'];
+  for (const key of [
+    'nodes',
+    'documents',
+    'references',
+    'notes',
+    'relations',
+  ]) {
+    const rows = snapshot[key];
+    if (!Array.isArray(rows) || rows.length > 100_000) {
+      throw new Error(`Collezione non valida: ${key}.`);
+    }
+    for (const input of rows) {
+      const row = record(input);
+      strings(row, commonFields);
+      if (key === 'nodes') {
+        strings(row, [
+          'title',
+          'type',
+          'synopsis',
+          'status',
+          'createdAt',
+          'updatedAt',
+        ]);
+        if (
+          !['volume', 'part', 'chapter', 'scene', 'folder'].includes(
+            String(row.type),
+          ) ||
+          (row.parentId !== null && typeof row.parentId !== 'string') ||
+          ![
+            'planned',
+            'in_progress',
+            'first_draft',
+            'revised',
+            'final',
+          ].includes(String(row.status))
+        ) {
+          throw new Error('Nodo non valido.');
+        }
+      }
+      if (key === 'documents') {
+        strings(row, ['ownerNodeId', 'contentFormat', 'updatedAt']);
+      }
+      if (key === 'references') {
+        strings(row, [
+          'kind',
+          'name',
+          'description',
+          'notes',
+          'createdAt',
+          'updatedAt',
+        ]);
+        if (!['character', 'location', 'object'].includes(String(row.kind))) {
+          throw new Error('Tipo di scheda non valido.');
+        }
+        if (
+          Object.values(record(row.fields)).some(
+            (value) => typeof value !== 'string',
+          )
+        ) {
+          throw new Error('Campi della scheda non validi.');
+        }
+      }
+      if (key === 'notes') {
+        strings(row, ['title', 'body', 'kind', 'createdAt', 'updatedAt']);
+        if (
+          !['project_note', 'research', 'synopsis'].includes(String(row.kind))
+        ) {
+          throw new Error('Tipo di nota non valido.');
+        }
+        identifiers(row.linkedNodeIds);
+        identifiers(row.linkedReferenceIds);
+      }
+      if (key === 'relations') {
+        strings(row, [
+          'sourceType',
+          'sourceId',
+          'targetType',
+          'targetId',
+          'relationType',
+        ]);
+        if (
+          !['mentions', 'appears_in', 'related_to', 'custom'].includes(
+            String(row.relationType),
+          )
+        ) {
+          throw new Error('Tipo di collegamento non valido.');
+        }
+      }
+      if (row.deletedAt !== undefined && typeof row.deletedAt !== 'string') {
+        throw new Error('Data di eliminazione non valida.');
+      }
+    }
+  }
+  if (
+    Object.entries(record(snapshot.settings)).some(
+      ([key, value]) => key === '__proto__' || typeof value !== 'string',
+    )
+  ) {
+    throw new Error('Impostazioni progetto non valide.');
+  }
+  const result = backup as unknown as ProjectBackup;
+  validateSnapshot(result.snapshot);
+  return result;
+}
+
+export async function exportBackup(
+  database: GenowriteDatabase,
+  projectId: string,
+) {
+  return database.transaction('r', database.projectTables, async () => {
+    const snapshot = await readProject(database, projectId);
+    return JSON.stringify(
+      {
+        format: 'genowrite3',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        snapshot,
+      } satisfies ProjectBackup,
+      null,
+      2,
+    );
+  });
+}
+
+export async function restoreBackup(
+  database: GenowriteDatabase,
+  backup: ProjectBackup,
+) {
+  // Non fidarsi nemmeno di un chiamante interno: nessuna scrittura prima della validazione.
+  const snapshot = structuredClone(
+    parseBackup(JSON.stringify(backup)).snapshot,
+  );
+  const all = [
+    snapshot.project,
+    ...snapshot.nodes,
+    ...snapshot.documents,
+    ...snapshot.references,
+    ...snapshot.notes,
+    ...snapshot.relations,
+  ];
+  const mapping = new Map(all.map((item) => [item.id, crypto.randomUUID()]));
+  const remap = (id: string) => mapping.get(id)!;
+  const projectId = remap(snapshot.project.id);
+  for (const item of all) {
+    item.id = remap(item.id);
+    if ('projectId' in item) {
+      item.projectId = projectId;
+    }
+  }
+  delete snapshot.project.deletedAt;
+  for (const node of snapshot.nodes) {
+    node.parentId = node.parentId ? remap(node.parentId) : null;
+    if (node.documentId) {
+      node.documentId = remap(node.documentId);
+    }
+  }
+  for (const document of snapshot.documents) {
+    document.ownerNodeId = remap(document.ownerNodeId);
+  }
+  for (const note of snapshot.notes) {
+    note.linkedNodeIds = note.linkedNodeIds.map(remap);
+    note.linkedReferenceIds = note.linkedReferenceIds.map(remap);
+  }
+  for (const relation of snapshot.relations) {
+    relation.sourceId = remap(relation.sourceId);
+    relation.targetId = remap(relation.targetId);
+  }
+  validateSnapshot(snapshot);
+  await database.transaction('rw', database.projectTables, async () => {
+    await database.projects.add(snapshot.project);
+    await database.nodes.bulkAdd(snapshot.nodes);
+    await database.documents.bulkAdd(snapshot.documents);
+    await database.references.bulkAdd(snapshot.references);
+    await database.notes.bulkAdd(snapshot.notes);
+    await database.relations.bulkAdd(snapshot.relations);
+    await database.projectSettings.add({
+      projectId,
+      values: snapshot.settings,
+    });
+  });
+  return projectId;
+}

@@ -1,0 +1,172 @@
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: var(--surface-low);
+}
+.navigation-panel {
+  border-right: 1px solid var(--outline-variant);
+}
+.inspector-panel {
+  border-left: 1px solid var(--outline-variant);
+}
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 14px 16px 8px 24px;
+}
+.panel-heading h2 {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.panel-heading .icon-button {
+  width: 36px;
+  min-width: 36px;
+  min-height: 36px;
+}
+.panel-scroll {
+  overflow: auto;
+  padding: 8px 16px 24px;
+  scrollbar-width: thin;
+}
+.project-card {
+  padding: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--outline-variant);
+  border-radius: 12px;
+  margin: 4px 0 24px;
+}
+.project-card > svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+.project-card strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+}
+.project-card span {
+  display: block;
+  font-size: 11px;
+  color: var(--on-surface-variant);
+}
+.section-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  padding: 0 12px 8px;
+}
+.manuscript-list,
+.manuscript-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.manuscript-list ul {
+  padding-left: 10px;
+  border-left: 1px solid var(--outline-variant);
+  margin-left: 9px;
+}
+.manuscript-list summary {
+  padding: 10px 3px 10px 9px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 8px;
+}
+.manuscript-list summary::marker {
+  color: var(--on-surface-variant);
+  font-size: 10px;
+}
+.manuscript-list .subtle {
+  display: block;
+  font-size: 10px;
+  padding-left: 12px;
+  color: var(--on-surface-variant);
+}
+.document-link {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 18px;
+  margin: 3px 0;
+}
+.document-link svg {
+  width: 16px;
+  height: 16px;
+}
+.document-link[aria-current='page'] {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+.library-preview {
+  margin-top: 28px;
+}
+.library-hint {
+  font-size: 10px;
+  padding: 0 12px 8px;
+  color: var(--on-surface-variant);
+}
+.library-preview button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.inspector-panel .panel-scroll {
+  padding: 12px 24px;
+}
+.inspector-panel h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 16px;
+}
+.metadata {
+  font-size: 12px;
+  margin: 24px 0;
+}
+.metadata > div {
+  margin-top: 16px;
+}
+.metadata dt {
+  color: var(--on-surface-variant);
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+.metadata dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+}
+.inspector-section {
+  border-top: 1px solid var(--outline-variant);
+  padding: 4px 0 20px;
+}
+.inspector-section p {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.8;
+}

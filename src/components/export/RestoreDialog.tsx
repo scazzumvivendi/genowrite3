@@ -1,3 +1,4 @@
+import { DropboxPanel } from '../dropbox/DropboxPanel';
 import { useState } from 'react';
 import { db } from '../../database/db';
 import {
@@ -38,6 +39,12 @@ export function RestoreDialog({
       onClose={onClose}
       protectContent={false}
     >
+      <DropboxPanel
+        onImport={(value) => {
+          setBackup(value);
+          setError('');
+        }}
+      />
       <label>
         File di backup
         <input

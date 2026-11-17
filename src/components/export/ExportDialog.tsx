@@ -1,3 +1,4 @@
+import { DropboxPanel } from '../dropbox/DropboxPanel';
 import { useState } from 'react';
 import { db, readProject } from '../../database/db';
 import type { ProjectSnapshot } from '../../modules/manuscript/model';
@@ -150,6 +151,14 @@ export function ExportDialog({
             <option value="json">Backup completo JSON</option>
           </select>
         </label>
+        {format === 'json' && (
+          <DropboxPanel
+            prepareExport={async () => {
+              await flush();
+              return exportBackup(db, snapshot.project.id);
+            }}
+          />
+        )}
         {format === 'json' ? (
           <p>
             Include manoscritto, biblioteca, note, relazioni, cestino e

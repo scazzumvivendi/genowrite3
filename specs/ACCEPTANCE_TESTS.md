@@ -101,3 +101,13 @@ Genowrite 3.0 is releasable only when:
 - backup/restore and offline behavior are verified;
 - DOCX/TXT exports have been tested in real office applications;
 - documentation accurately describes limitations.
+
+## Estensione autorizzata: Dropbox (novembre 2026)
+
+Il vincolo originale che esclude API remote e trasmissione di contenuti ammette
+ora importazione ed esportazione **opzionali ed esplicite** di backup JSON su
+Dropbox. Nessuna sincronizzazione automatica, account Genowrite o backend.
+L’archivio locale e l’uso offline rimangono indipendenti da Dropbox. Ogni upload
+crea una copia distinta; il download passa dalla validazione e dall’anteprima,
+poi dalla conferma di ripristino come nuovo progetto. Token brevi nella sessione
+della scheda, OAuth PKCE senza secret. Dettagli in `docs/DROPBOX.md`.

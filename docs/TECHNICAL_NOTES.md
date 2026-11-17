@@ -77,3 +77,10 @@ l’export dei casi misurati resta sotto circa 0,3 s, senza pause dell’UI oltr
 120 ms: un worker non è stato aggiunto in assenza di una necessità dimostrata.
 Non sono garanzie su hardware differente. WebKit Linux non certifica Safari reale.
 Microsoft Word e IME nativi rimangono verifiche manuali elencate nel gate di rilascio.
+
+## Trasferimenti Dropbox opzionali
+
+`src/modules/dropbox` contiene OAuth PKCE e il trasporto API, senza dipendenze
+aggiuntive. I componenti Dropbox riusano backup, validazione e ripristino atomico
+esistenti. Nessun traffico Dropbox all’avvio ordinario, salvo il completamento
+di un collegamento OAuth richiesto. Vedi [DROPBOX.md](DROPBOX.md).

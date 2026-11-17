@@ -1,7 +1,8 @@
 # Genowrite 3
 
-Applicazione di scrittura **local-first**, senza account, backend, API remote o
-telemetria. Implementate le funzionalità della roadmap in una versione
+Applicazione di scrittura **local-first**, senza account Genowrite, backend o
+telemetria. Importazione ed esportazione opzionali su Dropbox tramite API, solo
+su richiesta dell’utente. Implementate le funzionalità della roadmap in una versione
 **3.0.0-beta.1**: progetti e manoscritti reali, editor, biblioteca, statistiche,
 backup, DOCX/TXT e funzionamento offline. Il rilascio definitivo resta subordinato
 ai gate manuali indicati nella [checklist](docs/RELEASE_CHECKLIST.md), in particolare
@@ -95,6 +96,14 @@ build. `test:dev` avvia e verifica anche Vite dev sulla porta 5175. CI predispos
 per gli stessi gate e i tre browser; il runner remoto non è stato eseguito in
 questa sessione.
 
+## Dropbox
+
+Importa ed esporta backup JSON completi dai dialoghi **Ripristina backup** ed
+**Esporta → Backup completo JSON**. Ogni importazione crea un nuovo progetto;
+ogni esportazione una copia distinta. Nessuna sincronizzazione automatica.
+Prima dell’uso va aggiunto il redirect Genowrite 3 nella console Dropbox:
+vedi [configurazione e uso](docs/DROPBOX.md).
+
 ## GitHub Pages
 
 Il repository è predisposto per `https://scazzumvivendi.github.io/genowrite3/`.
@@ -107,7 +116,9 @@ Il repository è predisposto per `https://scazzumvivendi.github.io/genowrite3/`.
 3. Apri l’URL indicato nel deployment `github-pages` dopo il completamento del job
    `deploy-pages`.
 
-La build del deploy riceve il percorso da `actions/configure-pages`: supporta
+Il job `quality` costruisce una sola volta `dist-pages/`, la verifica con i test
+Pages e carica lo stesso artefatto per il deploy, senza ricompilarlo. Su `main`
+il percorso arriva da `actions/configure-pages`: supporta
 il sito di progetto, la radice e un eventuale dominio personalizzato configurato
 su GitHub. Non caricare i sorgenti come sito e non usare `docs/` come cartella
 pubblicata: l’artefatto contiene esclusivamente la build in `dist-pages/`.

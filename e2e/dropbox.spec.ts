@@ -1,5 +1,14 @@
 import { expect, test } from '@playwright/test';
 
+// Le API sono simulate: il service worker può sottrarre richieste al routing,
+// in particolare su WebKit. Offline/PWA sono verificati nelle suite dedicate.
+test.use({ serviceWorkers: 'block' });
+
+test.beforeEach(async ({ context }) => {
+  // Nessuna richiesta non simulata deve raggiungere un account Dropbox reale.
+  await context.route('https://*.dropboxapi.com/**', (route) => route.abort());
+});
+
 test('Dropbox: esportazione esplicita, anteprima e importazione indipendente', async ({
   page,
 }) => {

@@ -77,3 +77,16 @@ runtime aggiunta. Il workflow remoto non è stato eseguito in questa sessione.
 
 - [Deploy statico Vite e GitHub Pages](https://vite.dev/guide/static-deploy)
 - [Workflow personalizzati Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+
+## Pagina vuota con sorgenti Vite
+
+Se l’HTML pubblico contiene `/src/main.tsx`, `%BASE_URL%` o `%I18N_APP_TITLE%`,
+Pages sta pubblicando i sorgenti anziché la build. In Settings → Pages la source
+deve essere **GitHub Actions**, non `main / (root)`. Dopo il cambio attendere un
+workflow Quality gates riuscito e il job `deploy-pages`. Il workflow automatico
+`pages-build-deployment` della modalità branch non compila Vite.
+
+I test Dropbox con API simulate disabilitano il service worker per garantire
+che WebKit intercetti le richieste con Playwright. Ogni endpoint Dropbox non
+simulato viene bloccato. I test dedicati Pages/PWA mantengono il service worker
+attivo e verificano cache, offline e aggiornamenti.

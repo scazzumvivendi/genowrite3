@@ -40,6 +40,8 @@ storici; PHASE_7 e README descrivono lo stato attuale.
 - [x] App in sviluppo e build di produzione senza errori console nei flussi provati.
 - [x] Risorse runtime locali; nessun invio di manoscritti a servizi esterni.
 - [x] Documentazione utente, note tecniche e rapporti aggiornati.
+- [x] Build GitHub Pages sotto `/genowrite3/`, percorsi PWA e cache circoscritte.
+- [x] Workflow di pubblicazione su `main` subordinato ai controlli automatici.
 - [x] Avvio esclusivamente sull’archivio reale, senza progetti o testi precaricati.
 - [x] IndexedDB bloccato all’avvio: errore visibile invece di attesa permanente.
 - [x] Cestino concorrente: editor conservato, salvataggio e ripristino della bozza.

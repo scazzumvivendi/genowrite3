@@ -45,7 +45,12 @@ export function LocalTopBar({
           title="Progetti"
           onClick={onProjects}
         >
-          <img src="/icon.svg" alt="" width="44" height="44" />
+          <img
+            src={`${import.meta.env.BASE_URL}icon.svg`}
+            alt=""
+            width="44"
+            height="44"
+          />
         </button>
         <div className="project-context">
           <button

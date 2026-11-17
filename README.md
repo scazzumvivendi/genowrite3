@@ -95,6 +95,38 @@ build. `test:dev` avvia e verifica anche Vite dev sulla porta 5175. CI predispos
 per gli stessi gate e i tre browser; il runner remoto non è stato eseguito in
 questa sessione.
 
+## GitHub Pages
+
+Il repository è predisposto per `https://scazzumvivendi.github.io/genowrite3/`.
+
+1. In GitHub apri **Settings → Pages → Build and deployment → Source** e scegli
+   **GitHub Actions**.
+2. Porta queste modifiche su `main` con commit e push. Il workflow **Quality gates**
+   esegue i controlli e pubblica l’artefatto statico solo se passano. È disponibile
+   anche l’avvio manuale da **Actions → Quality gates → Run workflow**, su `main`.
+3. Apri l’URL indicato nel deployment `github-pages` dopo il completamento del job
+   `deploy-pages`.
+
+La build del deploy riceve il percorso da `actions/configure-pages`: supporta
+il sito di progetto, la radice e un eventuale dominio personalizzato configurato
+su GitHub. Non caricare i sorgenti come sito e non usare `docs/` come cartella
+pubblicata: l’artefatto contiene esclusivamente la build in `dist-pages/`.
+
+Per riprodurre localmente il percorso del repository:
+
+```sh
+npm run build:pages
+npm run preview -- --outDir dist-pages --base=/genowrite3/ --port 4174
+```
+
+Apri `http://127.0.0.1:4174/genowrite3/`. `npm run test:pages` verifica questo
+percorso con Chromium, Firefox e WebKit, compresi cache, aggiornamento, offline
+ed export DOCX. La build standard in `dist/` continua a funzionare alla radice.
+
+Il deploy non trasferisce progetti: per portare i dati da localhost a Pages usa
+backup e ripristino JSON. I dati rimangono nel browser sull’origine del sito;
+GitHub riceve soltanto i file statici dell’app. Vedi [DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
 ## Struttura e documentazione
 
 - `src/modules`: dominio, servizi, regole, statistiche, backup ed export.

@@ -33,7 +33,11 @@ export function LocalPreferences({
       protectContent={false}
     >
       <p>
-        <a href="/third-party-notices.txt" target="_blank" rel="noreferrer">
+        <a
+          href={`${import.meta.env.BASE_URL}third-party-notices.txt`}
+          target="_blank"
+          rel="noreferrer"
+        >
           Licenze delle dipendenze
         </a>
       </p>

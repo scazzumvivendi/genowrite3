@@ -56,8 +56,13 @@ PWA: plugin di build locale che precache tutti gli asset, compresi chunk lazy,
 manifest, icone e licenze. Nessun runtime service o richiesta di manoscritti.
 Aggiornamento esplicito dopo flush; cache precedenti conservate quando ci sono
 altre finestre. Asset match ignora Vary soltanto per le risorse statiche dell’app.
-Server e base path devono servire l’app alla radice; sottopercorsi non configurati
-non vengono promessi. CSP di produzione senza script inline; Vite dev usa un nonce
+Il base path proviene dalla configurazione Vite: shell, asset runtime, manifest e
+service worker rispettano sia `/` sia `/genowrite3/`. Il manifest risolve start_url,
+scope e icone relativamente alla propria posizione. Ogni base path ha un prefisso
+di cache distinto; il worker ignora richieste esterne al proprio percorso e non
+elimina cache di altre applicazioni. IndexedDB rimane separato dalla cache e non
+viene rinominato: il suo isolamento è per origine, non per percorso.
+CSP di produzione senza script inline; Vite dev usa un nonce
 dedicato al preambolo React locale.
 
 ## Toolchain e verifiche

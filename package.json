@@ -18,7 +18,9 @@
     "check": "npm run build && npm test && npm run test:e2e",
     "prebuild": "npm run lint && npm run format:check && node scripts/licenses.mjs",
     "test:browsers": "playwright test --config playwright.all.config.ts",
-    "test:dev": "playwright test --config playwright.dev.config.ts"
+    "test:dev": "playwright test --config playwright.dev.config.ts",
+    "build:pages": "npm run build -- --base=/genowrite3/ --outDir=dist-pages",
+    "test:pages": "playwright test --config playwright.pages.config.ts"
   },
   "dependencies": {
     "@tiptap/core": "3.34.0",

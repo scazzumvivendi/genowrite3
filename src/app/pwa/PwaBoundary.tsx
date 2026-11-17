@@ -15,7 +15,9 @@ export function PwaBoundary({ children }: { children: ReactNode }) {
     }
     let disposed = false;
     void navigator.serviceWorker
-      .register('/sw.js')
+      .register(`${import.meta.env.BASE_URL}sw.js`, {
+        scope: import.meta.env.BASE_URL,
+      })
       .then((registration) => {
         if (disposed) {
           return;

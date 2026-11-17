@@ -118,7 +118,9 @@ export async function uploadDropboxBackup(text: string) {
         strict_conflict: true,
       }),
     },
-    blob,
+    // La stringa viene codificata in UTF-8 come il Blob, ma il suo corpo è
+    // ispezionabile anche dal routing Playwright su WebKit.
+    text,
   );
   return (await response.json()) as DropboxFile;
 }

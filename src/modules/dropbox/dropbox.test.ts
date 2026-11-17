@@ -162,7 +162,8 @@ it('esporta una copia completa senza sovrascrivere, header Unicode valido e impo
         (character) => character.charCodeAt(0) < 128,
       ),
     ).toBe(true);
-    expect(await options.body.text()).toBe(text);
+    expect(options.headers['Content-Type']).toBe('application/octet-stream');
+    expect(options.body).toBe(text);
     const file = {
       id: 'id:backup',
       name: 'backup',

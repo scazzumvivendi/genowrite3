@@ -27,7 +27,9 @@ test('Dropbox: esportazione esplicita, anteprima e importazione indipendente', a
   await page.route(
     'https://content.dropboxapi.com/2/files/upload',
     async (route) => {
-      exported = route.request().postData()!;
+      const body = route.request().postData();
+      expect(body).not.toBeNull();
+      exported = body ?? '';
       expect(
         JSON.parse(route.request().headers()['dropbox-api-arg']!).mode,
       ).toBe('add');

@@ -31,6 +31,11 @@ Nella [console Dropbox](https://www.dropbox.com/developers/apps), aprire l’app
 La configurazione remota e il consenso con un account reale restano verifiche
 manuali: i test automatici usano API simulate e non trasferiscono manoscritti reali.
 
+L’upload invia il JSON come stringa UTF-8 con tipo `application/octet-stream`;
+un Blob ne misura la dimensione in byte prima dell’invio. Il corpo testuale
+permette di verificare il contenuto tramite il routing Playwright anche su WebKit,
+che può non esporre il corpo delle richieste con payload Blob.
+
 ## Uso
 
 Usare il pulsante **Dropbox** nella barra principale oppure il pannello Dropbox sempre visibile in **Esporta**, quindi scegliere **Collega Dropbox**.
@@ -81,6 +86,11 @@ compresi PKCE, callback, scadenza/revoca, paginazione, Unicode, upload e validaz
 Il test Chromium con API simulate verifica esportazione dell’ultima bozza,
 anteprima, ripristino del testo e conservazione di entrambi i progetti.
 L’autorizzazione reale con la App key fornita richiede la configurazione in console.
+
+Dopo la correzione del payload per WebKit: build, lint, formattazione e 53 test
+unitari/integrativi superati; entrambi i test Dropbox superati su Chromium e
+Firefox (4 E2E). La verifica locale WebKit resta bloccata all’avvio dalla mancanza
+di `libicu74` nel sistema host e va completata in CI.
 
 ## Backup periodico
 

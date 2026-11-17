@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import type { ReferenceRecord, Note } from '../manuscript/model';
 import { requireTitle } from '../manuscript/validation';
 import {
@@ -24,7 +25,7 @@ export class LibraryService {
         ? snapshot.references.find((item) => item.id === id)
         : undefined;
       if (id && !current) {
-        throw new Error('Scheda non trovata.');
+        throw new Error(t('scheda_non_trovata_e09402'));
       }
       const record: ReferenceRecord = {
         id: current?.id ?? crypto.randomUUID(),
@@ -85,7 +86,7 @@ export class LibraryService {
         ? snapshot.notes.find((item) => item.id === id)
         : undefined;
       if (id && !current) {
-        throw new Error('Nota non trovata.');
+        throw new Error(t('nota_non_trovata_69b664'));
       }
       const note: Note = {
         id: current?.id ?? crypto.randomUUID(),
@@ -111,7 +112,7 @@ export class LibraryService {
         kind === 'reference' ? snapshot.references : snapshot.notes
       ).find((record) => record.id === id);
       if (!item) {
-        throw new Error('Elemento non trovato.');
+        throw new Error(t('elemento_non_trovato_bee2a6'));
       }
       if (deleted) {
         item.deletedAt = new Date().toISOString();

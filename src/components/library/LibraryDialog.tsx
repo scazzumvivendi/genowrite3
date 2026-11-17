@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { confirmDiscard, markFormSaved } from '../common/form-state';
 import { useRef, useState } from 'react';
 import type {
@@ -10,10 +11,10 @@ import { Modal } from '../common/Modal';
 
 export type LibraryKind = ReferenceRecord['kind'] | 'note';
 const labels: Record<LibraryKind, string> = {
-  character: 'Personaggi',
-  location: 'Luoghi',
-  object: 'Oggetti',
-  note: 'Note e ricerca',
+  character: t('personaggi_5ab105'),
+  location: t('luoghi_04b8bf'),
+  object: t('oggetti_1de452'),
+  note: t('note_e_ricerca_81890c'),
 };
 
 export function LibraryDialog({
@@ -98,7 +99,9 @@ export function LibraryDialog({
     if (
       value &&
       !window.confirm(
-        'Spostare la scheda nel cestino? I collegamenti verranno conservati.',
+        t(
+          'spostare_la_scheda_nel_cestino_i_collegamenti_verranno_conservati_95ed9e',
+        ),
       )
     ) {
       return;
@@ -119,8 +122,9 @@ export function LibraryDialog({
     <Modal title={labels[kind]} onClose={onClose}>
       {error && <p role="alert">{error}</p>}
       <p className="muted">
-        Materiale di riferimento: escluso da conteggi ed esportazione del
-        manoscritto.
+        {t(
+          'materiale_di_riferimento_escluso_da_conteggi_ed_esportazione_del__f3a909',
+        )}
       </p>
       <div className="dialog-actions">
         <button
@@ -129,7 +133,7 @@ export function LibraryDialog({
             changeSelection(undefined);
           }}
         >
-          Nuova scheda
+          {t('nuova_scheda_3305fe')}
         </button>
         <button
           onClick={() => {
@@ -138,7 +142,7 @@ export function LibraryDialog({
             }
           }}
         >
-          {trash ? 'Mostra schede' : 'Cestino schede'}
+          {trash ? t('mostra_schede_ae13cb') : t('cestino_schede_728d74')}
         </button>
       </div>
       <ul className="library-list">
@@ -151,7 +155,7 @@ export function LibraryDialog({
               </button>
               {trash && (
                 <button onClick={() => void deleted(item.id, false)}>
-                  Ripristina
+                  {t('ripristina_cf1718')}
                 </button>
               )}
             </li>
@@ -167,7 +171,7 @@ export function LibraryDialog({
           }}
         >
           <label>
-            Nome o titolo
+            {t('nome_o_titolo_4631dd')}
             <input
               name="title"
               required
@@ -177,17 +181,21 @@ export function LibraryDialog({
           </label>
           {kind === 'note' ? (
             <label>
-              Tipo nota
+              {t('tipo_nota_643021')}
               <select name="kind" defaultValue={note?.kind ?? 'project_note'}>
-                <option value="project_note">Nota di progetto</option>
-                <option value="research">Ricerca</option>
-                <option value="synopsis">Sinossi di progetto</option>
+                <option value="project_note">
+                  {t('nota_di_progetto_dac4a9')}
+                </option>
+                <option value="research">{t('ricerca_152c39')}</option>
+                <option value="synopsis">
+                  {t('sinossi_di_progetto_ff39b7')}
+                </option>
               </select>
             </label>
           ) : (
             <>
               <label>
-                Descrizione
+                {t('descrizione_6fb818')}
                 <textarea
                   name="description"
                   rows={3}
@@ -195,7 +203,7 @@ export function LibraryDialog({
                 />
               </label>
               <label>
-                Dettagli liberi (ruolo, alias, caratteristiche)
+                {t('dettagli_liberi_ruolo_alias_caratteristiche_ad8739')}
                 <textarea
                   name="details"
                   rows={2}
@@ -205,7 +213,7 @@ export function LibraryDialog({
             </>
           )}
           <label>
-            Testo e appunti
+            {t('testo_e_appunti_13bb9e')}
             <textarea
               name="body"
               rows={6}
@@ -213,7 +221,7 @@ export function LibraryDialog({
             />
           </label>
           <fieldset>
-            <legend>Collegamenti a capitoli e scene</legend>
+            <legend>{t('collegamenti_a_capitoli_e_scene_d21b99')}</legend>
             {snapshot.nodes
               .filter(
                 (node) =>
@@ -233,7 +241,7 @@ export function LibraryDialog({
           </fieldset>
           {kind === 'note' && (
             <fieldset>
-              <legend>Collegamenti alle schede</legend>
+              <legend>{t('collegamenti_alle_schede_b607ff')}</legend>
               {snapshot.references
                 .filter((record) => !record.deletedAt)
                 .map((record) => (
@@ -251,13 +259,13 @@ export function LibraryDialog({
                 ))}
             </fieldset>
           )}
-          <button className="filled-button">Salva scheda</button>
+          <button className="filled-button">{t('salva_scheda_436758')}</button>
           {current && (
             <button
               type="button"
               onClick={() => void deleted(current.id, true)}
             >
-              Sposta scheda nel cestino
+              {t('sposta_scheda_nel_cestino_98d438')}
             </button>
           )}
         </form>

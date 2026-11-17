@@ -96,11 +96,17 @@ build. `test:dev` avvia e verifica anche Vite dev sulla porta 5175. CI predispos
 per gli stessi gate e i tre browser; il runner remoto non è stato eseguito in
 questa sessione.
 
+## Testi e lingua
+
+Interfaccia e messaggi applicativi usano un catalogo i18n solo italiano, incluso
+localmente. Nessuna traduzione inglese aggiunta. Vedi [I18N.md](docs/I18N.md).
+
 ## Dropbox
 
 Importa ed esporta backup JSON completi dai dialoghi **Ripristina backup** ed
 **Esporta → Backup completo JSON**. Ogni importazione crea un nuovo progetto;
-ogni esportazione una copia distinta. Nessuna sincronizzazione automatica.
+ogni esportazione una copia distinta. Backup periodico opzionale ogni minuto dal pulsante **Dropbox**, solo se ci sono
+modifiche e mentre il progetto è aperto in una scheda visibile. Nessun merge automatico.
 Prima dell’uso va aggiunto il redirect Genowrite 3 nella console Dropbox:
 vedi [configurazione e uso](docs/DROPBOX.md).
 

@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useState } from 'react';
 import type { ProjectSnapshot } from '../../modules/manuscript/model';
 import { searchProject, type SearchResult } from '../../modules/library/search';
@@ -15,16 +16,20 @@ export function SearchDialog({
   const [query, setQuery] = useState('');
   const results = searchProject(snapshot, query);
   return (
-    <Modal title="Cerca nel progetto" onClose={onClose} protectContent={false}>
+    <Modal
+      title={t('cerca_nel_progetto_33398f')}
+      onClose={onClose}
+      protectContent={false}
+    >
       <label>
-        Cerca testo, titoli e riferimenti
+        {t('cerca_testo_titoli_e_riferimenti_7d7208')}
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           autoFocus
         />
       </label>
-      <p>{results.length} risultati</p>
+      <p>{t('search.results', { count: results.length })}</p>
       <ul className="search-results">
         {results.slice(0, 100).map((result) => (
           <li key={result.id}>
@@ -32,10 +37,10 @@ export function SearchDialog({
               <strong>{result.title}</strong>
               <small>
                 {result.type === 'node'
-                  ? 'Manoscritto'
+                  ? t('manoscritto_bc53cf')
                   : result.type === 'note'
-                    ? 'Nota'
-                    : 'Scheda'}
+                    ? t('nota_ecef8a')
+                    : t('scheda_458ab1')}
               </small>
               <span>{result.excerpt}</span>
             </button>

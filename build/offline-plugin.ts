@@ -1,3 +1,4 @@
+import { manifest } from './manifest.ts';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import type { Plugin } from 'vite';
@@ -32,7 +33,11 @@ export function offlinePlugin(): Plugin {
         .update(
           JSON.stringify(assets) +
             publicAssets
-              .map((name) => readFileSync(`public/${name}`).toString('base64'))
+              .map((name) =>
+                name === 'manifest.webmanifest'
+                  ? JSON.stringify(manifest)
+                  : readFileSync(`public/${name}`).toString('base64'),
+              )
               .join(''),
         )
         .digest('hex')

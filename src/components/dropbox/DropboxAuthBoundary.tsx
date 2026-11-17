@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useEffect, useState, type ReactNode } from 'react';
 import { finishDropboxAuth } from '../../modules/dropbox/auth';
 
@@ -10,7 +11,9 @@ export function DropboxAuthBoundary({ children }: { children: ReactNode }) {
       .then((connected) => {
         if (mounted && connected) {
           setMessage(
-            'Dropbox collegato. Apri Esporta oppure Ripristina backup per trasferire un progetto.',
+            t(
+              'dropbox_collegato_apri_esporta_oppure_ripristina_backup_per_trasf_1198f9',
+            ),
           );
         }
       })
@@ -29,7 +32,7 @@ export function DropboxAuthBoundary({ children }: { children: ReactNode }) {
     };
   }, []);
   if (!ready) {
-    return <p role="status">Apertura Genowrite…</p>;
+    return <p role="status">{t('apertura_genowrite_7e8d1e')}</p>;
   }
   return (
     <>
@@ -37,7 +40,7 @@ export function DropboxAuthBoundary({ children }: { children: ReactNode }) {
         <div role="status">
           <p>{message}</p>
           <button onClick={() => setMessage('')}>
-            Chiudi messaggio Dropbox
+            {t('chiudi_messaggio_dropbox_59d283')}
           </button>
         </div>
       )}

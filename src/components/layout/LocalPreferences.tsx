@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useState } from 'react';
 import {
   type Preferences,
@@ -28,7 +29,7 @@ export function LocalPreferences({
   }
   return (
     <Modal
-      title="Preferenze di scrittura"
+      title={t('preferenze_di_scrittura_f84136')}
       onClose={onClose}
       protectContent={false}
     >
@@ -38,7 +39,7 @@ export function LocalPreferences({
           target="_blank"
           rel="noreferrer"
         >
-          Licenze delle dipendenze
+          {t('licenze_delle_dipendenze_9b942e')}
         </a>
       </p>
       {error && <p role="alert">{error}</p>}
@@ -49,7 +50,7 @@ export function LocalPreferences({
         }}
       >
         <label>
-          Tema
+          {t('tema_d5df37')}
           <select
             value={value.theme}
             onChange={(event) =>
@@ -59,13 +60,13 @@ export function LocalPreferences({
               })
             }
           >
-            <option value="system">Sistema</option>
-            <option value="light">Chiaro</option>
-            <option value="dark">Scuro</option>
+            <option value="system">{t('sistema_f150af')}</option>
+            <option value="light">{t('chiaro_8f1b4e')}</option>
+            <option value="dark">{t('scuro_316022')}</option>
           </select>
         </label>
         <label>
-          Carattere dell’editor
+          {t('carattere_dell_editor_0fa595')}
           <select
             value={value.font}
             onChange={(event) =>
@@ -75,13 +76,13 @@ export function LocalPreferences({
               })
             }
           >
-            <option value="Georgia">Georgia</option>
-            <option value="system-ui">Sistema</option>
-            <option value="monospace">Monospazio</option>
+            <option value="Georgia">{t('georgia_469149')}</option>
+            <option value="system-ui">{t('sistema_f150af')}</option>
+            <option value="monospace">{t('monospazio_de8f68')}</option>
           </select>
         </label>
         <label>
-          Dimensione testo (px)
+          {t('dimensione_testo_px_e7c926')}
           <input
             type="number"
             min={14}
@@ -93,7 +94,7 @@ export function LocalPreferences({
           />
         </label>
         <label>
-          Interlinea
+          {t('interlinea_377aec')}
           <input
             type="number"
             min={1.2}
@@ -106,7 +107,7 @@ export function LocalPreferences({
           />
         </label>
         <label>
-          Larghezza testo (px)
+          {t('larghezza_testo_px_a83c63')}
           <input
             type="number"
             min={400}
@@ -119,7 +120,7 @@ export function LocalPreferences({
           />
         </label>
         <label>
-          Velocità lettura (parole/minuto)
+          {t('velocita_lettura_parole_minuto_b7f3e5')}
           <input
             type="number"
             min={80}
@@ -131,7 +132,7 @@ export function LocalPreferences({
           />
         </label>
         <label>
-          Ritardo autosalvataggio (ms)
+          {t('ritardo_autosalvataggio_ms_58c079')}
           <input
             type="number"
             min={300}
@@ -144,7 +145,7 @@ export function LocalPreferences({
           />
         </label>
         <label>
-          Profilo predefinito di esportazione
+          {t('profilo_predefinito_di_esportazione_3fcdb2')}
           <select
             value={value.defaultExportProfile}
             onChange={(event) =>
@@ -155,19 +156,21 @@ export function LocalPreferences({
               })
             }
           >
-            <option value="manuscript">Manoscritto</option>
-            <option value="custom">Ultimo personalizzato del progetto</option>
+            <option value="manuscript">{t('manoscritto_bc53cf')}</option>
+            <option value="custom">
+              {t('ultimo_personalizzato_del_progetto_9038f9')}
+            </option>
           </select>
         </label>
         <fieldset>
-          <legend>Tipografia automatica</legend>
+          <legend>{t('tipografia_automatica_0e9dc1')}</legend>
           {(
             [
-              ['italian', "e' → è"],
-              ['apostrophe', 'Apostrofi italiani'],
-              ['ellipsis', 'Tre punti → ellissi'],
-              ['spaces', 'Spazi ripetuti'],
-              ['capitalization', 'Maiuscole dopo frasi non ambigue'],
+              ['italian', t('preferences.italianAccent')],
+              ['apostrophe', t('apostrofi_italiani_967eed')],
+              ['ellipsis', t('tre_punti_ellissi_a649bb')],
+              ['spaces', t('spazi_ripetuti_d039c6')],
+              ['capitalization', t('maiuscole_dopo_frasi_non_ambigue_c67a5d')],
             ] as const
           ).map(([key, label]) => (
             <label className="checkbox-label" key={key}>
@@ -182,7 +185,7 @@ export function LocalPreferences({
             </label>
           ))}
           <label>
-            Trattini
+            {t('trattini_a117b0')}
             <select
               value={value.dash}
               onChange={(event) =>
@@ -192,13 +195,13 @@ export function LocalPreferences({
                 })
               }
             >
-              <option value="off">Nessuna sostituzione</option>
-              <option value="en">Lineetta media –</option>
-              <option value="em">Lineetta lunga —</option>
+              <option value="off">{t('nessuna_sostituzione_76b6ff')}</option>
+              <option value="en">{t('lineetta_media_fc1726')}</option>
+              <option value="em">{t('lineetta_lunga_a7fce8')}</option>
             </select>
           </label>
           <label>
-            Acronimi ignorati (separati da virgola)
+            {t('acronimi_ignorati_separati_da_virgola_a5dcda')}
             <input
               value={value.acronymExceptions.join(',')}
               onChange={(event) =>
@@ -214,7 +217,7 @@ export function LocalPreferences({
           </label>
         </fieldset>
         <button className="filled-button" disabled={busy}>
-          {busy ? 'Salvataggio…' : 'Salva preferenze'}
+          {busy ? t('salvataggio_c4f57f') : t('salva_preferenze_0c25ea')}
         </button>
       </form>
     </Modal>

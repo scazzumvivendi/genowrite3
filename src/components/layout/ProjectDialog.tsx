@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useState } from 'react';
 import type { Project } from '../../modules/manuscript/model';
 import { projectService } from '../../modules/storage/project-service';
@@ -28,7 +29,7 @@ export function ProjectDialog({
     }
   }
   return (
-    <Modal title="Proprietà progetto" onClose={onClose}>
+    <Modal title={t('proprieta_progetto_d54e34')} onClose={onClose}>
       {error && <p role="alert">{error}</p>}
       <form
         onSubmit={(event) => {
@@ -37,7 +38,7 @@ export function ProjectDialog({
         }}
       >
         <label>
-          Titolo
+          {t('titolo_d8f4ee')}
           <input
             name="title"
             defaultValue={project.title}
@@ -46,28 +47,31 @@ export function ProjectDialog({
           />
         </label>
         <label>
-          Autore
+          {t('autore_80e378')}
           <input name="author" defaultValue={project.author} />
         </label>
         <label>
-          Genere
+          {t('genere_103424')}
           <input name="genre" defaultValue={project.genre} />
         </label>
         <label>
-          Descrizione
+          {t('descrizione_6fb818')}
           <textarea
             name="description"
             defaultValue={project.description}
             rows={3}
           />
         </label>
-        <button className="filled-button">Salva progetto</button>
+        <button className="filled-button">{t('salva_progetto_ff9aff')}</button>
       </form>
       <button
         onClick={() => {
           if (
             window.confirm(
-              `Spostare il progetto “${project.title}” nel cestino? Potrai ripristinarlo dalla raccolta progetti.`,
+              t(
+                'spostare_il_progetto_value0_nel_cestino_potrai_ripristinarlo_dall_02f2f7',
+                { value0: project.title },
+              ),
             )
           ) {
             void projectService
@@ -77,7 +81,7 @@ export function ProjectDialog({
           }
         }}
       >
-        Sposta progetto nel cestino
+        {t('sposta_progetto_nel_cestino_c7b1bf')}
       </button>
     </Modal>
   );

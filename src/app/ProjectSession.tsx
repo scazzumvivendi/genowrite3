@@ -1,3 +1,6 @@
+import { t } from '../i18n';
+import { DropboxDialog } from '../components/dropbox/DropboxDialog';
+import { useDropboxAutomatic } from '../hooks/useDropboxAutomatic';
 import { useSystemTheme } from '../hooks/useSystemTheme';
 import { download } from '../modules/export/download';
 import { safeFilename } from '../modules/export/manuscript';
@@ -58,6 +61,7 @@ export function ProjectSession({
     | 'library'
     | 'search'
     | 'export'
+    | 'dropbox'
   >();
   const [save, setSave] = useState<SaveState>('saved');
   const [error, setError] = useState('');
@@ -76,6 +80,7 @@ export function ProjectSession({
         preferences.autosaveDelay,
       ),
   );
+  const automatic = useDropboxAutomatic(snapshot.project.id, saver);
   // Un cestinamento concorrente non deve smontare l’editor con una bozza aperta.
   const node = snapshot.nodes.find((item) => item.id === activeId);
   const removedNode = snapshot.nodes.find(
@@ -83,11 +88,21 @@ export function ProjectSession({
   );
   const warning =
     error ||
+    automatic.error ||
+    (automatic.value?.error
+      ? t('backup_dropbox_in_pausa_value0_1edbfd', {
+          value0: automatic.value.error,
+        })
+      : '') ||
     readError ||
     (snapshot.project.deletedAt
-      ? 'Questo progetto è stato spostato nel cestino. Il testo rimane conservato e puoi ripristinarlo.'
+      ? t(
+          'questo_progetto_e_stato_spostato_nel_cestino_il_testo_rimane_cons_ab0746',
+        )
       : removedNode
-        ? 'L’elemento aperto è stato spostato nel cestino. Il testo è conservato; puoi ripristinarlo da Organizza.'
+        ? t(
+            'l_elemento_aperto_e_stato_spostato_nel_cestino_il_testo_e_conserv_a07304',
+          )
         : '');
   const document = snapshot.documents.find(
     (item) => item.id === node?.documentId,
@@ -161,11 +176,11 @@ export function ProjectSession({
       data-theme={dark ? 'dark' : 'light'}
     >
       <a className="skip-link" href="#writing-main">
-        Vai alla scrittura
+        {t('vai_alla_scrittura_73a43b')}
       </a>
       <LocalTopBar
         projectTitle={snapshot.project.title}
-        title={node?.title ?? 'Manoscritto'}
+        title={node?.title ?? t('manoscritto_bc53cf')}
         state={save}
         navigation={navigationOpen}
         inspector={inspectorOpen}
@@ -187,6 +202,8 @@ export function ProjectSession({
         onProperties={() => void run(() => setDialog('project'))}
         onPreferences={() => setDialog('preferences')}
         onExport={() => setDialog('export')}
+        onDropbox={() => setDialog('dropbox')}
+        dropboxActive={automatic.value?.enabled ?? false}
       />
       <div
         className="workspace-grid"
@@ -229,7 +246,7 @@ export function ProjectSession({
           <Suspense
             fallback={
               <main className="writing-main" role="status">
-                Apertura documento…
+                {t('apertura_documento_b4826c')}
               </main>
             }
           >
@@ -249,26 +266,30 @@ export function ProjectSession({
           >
             <div>
               <p className="document-breadcrumb">{snapshot.project.title}</p>
-              <h1>{node?.title ?? 'La tua prossima storia'}</h1>
+              <h1>{node?.title ?? t('la_tua_prossima_storia_ab0357')}</h1>
               <p>
                 {node
-                  ? 'Questo elemento organizza il manoscritto. Seleziona un capitolo o una scena per scrivere.'
-                  : 'Inizia con un capitolo. Il resto può aspettare.'}
+                  ? t(
+                      'questo_elemento_organizza_il_manoscritto_seleziona_un_capitolo_o__0db0a6',
+                    )
+                  : t('inizia_con_un_capitolo_il_resto_puo_aspettare_1ea596')}
               </p>
               <button
                 className="filled-button"
                 onClick={() => setDialog('create')}
               >
-                Nuovo elemento
+                {t('nuovo_elemento_8c610b')}
               </button>
-              <button onClick={() => setDialog('manage')}>Organizza</button>
+              <button onClick={() => setDialog('manage')}>
+                {t('organizza_916b93')}
+              </button>
             </div>
           </main>
         )}
         {inspectorOpen && (
           <aside
             className="inspector-panel side-panel"
-            aria-label="Dettagli documento"
+            aria-label={t('dettagli_documento_09b5b5')}
             onKeyDown={(event) => {
               if (event.key === 'Escape') {
                 closePanel('inspector');
@@ -276,13 +297,15 @@ export function ProjectSession({
             }}
           >
             <div className="panel-heading">
-              <h2>Dettagli</h2>
-              <button onClick={() => closePanel('inspector')}>Chiudi</button>
+              <h2>{t('dettagli_1a45b0')}</h2>
+              <button onClick={() => closePanel('inspector')}>
+                {t('chiudi_32d407')}
+              </button>
             </div>
             <div className="panel-scroll">
               <h3>{node?.title ?? snapshot.project.title}</h3>
-              <p>{node?.synopsis || 'Nessuna sinossi.'}</p>
-              <h3>Riferimenti collegati</h3>
+              <p>{node?.synopsis || t('nessuna_sinossi_98f326')}</p>
+              <h3>{t('riferimenti_collegati_32d5ee')}</h3>
               {snapshot.references
                 .filter(
                   (record) =>
@@ -306,7 +329,7 @@ export function ProjectSession({
                     {record.name}
                   </button>
                 ))}
-              <h3>Note collegate</h3>
+              <h3>{t('note_collegate_59690d')}</h3>
               {snapshot.notes
                 .filter(
                   (note) =>
@@ -331,10 +354,10 @@ export function ProjectSession({
                   void run(() => rebuildStatistics(snapshot.project.id))
                 }
               >
-                Ricalcola conteggi
+                {t('ricalcola_conteggi_491540')}
               </button>
               <button onClick={() => setDialog(node ? 'manage' : 'project')}>
-                Modifica dettagli
+                {t('modifica_dettagli_b36bce')}
               </button>
             </div>
           </aside>
@@ -356,16 +379,16 @@ export function ProjectSession({
                 )
               }
             >
-              Ripristina progetto
+              {t('ripristina_progetto_a781ac')}
             </button>
           )}
           {removedNode && (
             <button onClick={() => setDialog('manage')}>
-              Apri cestino elementi
+              {t('apri_cestino_elementi_6c1a11')}
             </button>
           )}
           <button onClick={() => void run(() => setError(''))}>
-            Riprova salvataggio
+            {t('riprova_salvataggio_d8ba9d')}
           </button>
           <button
             onClick={() => {
@@ -390,9 +413,11 @@ export function ProjectSession({
               );
             }}
           >
-            Scarica copia di emergenza
+            {t('scarica_copia_di_emergenza_ce5617')}
           </button>
-          <button onClick={() => setError('')}>Chiudi avviso</button>
+          <button onClick={() => setError('')}>
+            {t('chiudi_avviso_892129')}
+          </button>
         </div>
       )}
       {(dialog === 'create' || dialog === 'manage') && (
@@ -413,6 +438,13 @@ export function ProjectSession({
           project={snapshot.project}
           onClose={() => setDialog(undefined)}
           onDeleted={onProjects}
+        />
+      )}
+      {dialog === 'dropbox' && (
+        <DropboxDialog
+          projectId={snapshot.project.id}
+          flush={() => saver.flush()}
+          onClose={() => setDialog(undefined)}
         />
       )}
       {dialog === 'export' && (

@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 export function hasUnsavedFields(root: Element | null) {
   const controls =
     root?.querySelectorAll<
@@ -22,7 +23,9 @@ export function confirmDiscard(root: Element | null) {
   return (
     !hasUnsavedFields(root) ||
     window.confirm(
-      'Ci sono modifiche non salvate in questa finestra. Vuoi abbandonarle?',
+      t(
+        'ci_sono_modifiche_non_salvate_in_questa_finestra_vuoi_abbandonarl_db54a4',
+      ),
     )
   );
 }

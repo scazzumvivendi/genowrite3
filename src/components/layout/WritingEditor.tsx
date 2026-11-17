@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import type { JSONContent } from '@tiptap/core';
 import { editorExtensions } from '../../modules/editor/extensions';
@@ -9,7 +10,7 @@ export function WritingEditor({
   document,
   content,
   onChange,
-  statusLabel = 'prima stesura',
+  statusLabel = t('prima_stesura_562f06'),
   rules = () => defaultRules,
   diagnosticSettings = defaultRules,
 }: {
@@ -26,7 +27,7 @@ export function WritingEditor({
     editorProps: {
       attributes: {
         role: 'textbox',
-        'aria-label': `Testo · ${document.title}`,
+        'aria-label': t('testo_value0_af791a', { value0: document.title }),
         'aria-multiline': 'true',
         'aria-describedby': 'editing-notice',
         spellcheck: 'false',
@@ -50,32 +51,32 @@ export function WritingEditor({
       className="writing-main live-editor"
       id="writing-main"
       tabIndex={-1}
-      aria-label="Area di scrittura"
+      aria-label={t('area_di_scrittura_6f4475')}
     >
       <div
         className="writing-toolbar"
         role="group"
-        aria-label="Formattazione testo"
+        aria-label={t('formattazione_testo_406aae')}
       >
         <button
           className="icon-button format-bold"
-          aria-label="Grassetto"
+          aria-label={t('grassetto_7b71a1')}
           aria-pressed={state?.bold ?? false}
           onClick={() => editor?.chain().focus().toggleBold().run()}
         >
-          <span aria-hidden="true">B</span>
+          <span aria-hidden="true">{t('b_df7e70')}</span>
         </button>
         <button
           className="icon-button format-italic"
-          aria-label="Corsivo"
+          aria-label={t('corsivo_9ca55c')}
           aria-pressed={state?.italic ?? false}
           onClick={() => editor?.chain().focus().toggleItalic().run()}
         >
-          <span aria-hidden="true">I</span>
+          <span aria-hidden="true">{t('i_a83dd0')}</span>
         </button>
         <button
           className="icon-button"
-          aria-label="Elenco puntato"
+          aria-label={t('elenco_puntato_ee2081')}
           aria-pressed={state?.list ?? false}
           onClick={() => editor?.chain().focus().toggleBulletList().run()}
         >
@@ -84,15 +85,15 @@ export function WritingEditor({
         <>
           <button
             className="icon-button"
-            aria-label="Sottolineato"
+            aria-label={t('sottolineato_be834f')}
             aria-pressed={state?.underline ?? false}
             onClick={() => editor?.chain().focus().toggleUnderline().run()}
           >
-            <u aria-hidden="true">U</u>
+            <u aria-hidden="true">{t('u_a25513')}</u>
           </button>
           <button
             className="icon-button"
-            aria-label="Elenco numerato"
+            aria-label={t('elenco_numerato_6f95a7')}
             aria-pressed={state?.ordered ?? false}
             onClick={() => editor?.chain().focus().toggleOrderedList().run()}
           >
@@ -102,22 +103,22 @@ export function WritingEditor({
         <span className="action-separator" />
         <button
           className="icon-button"
-          aria-label="Annulla"
-          title="Annulla"
+          aria-label={t('annulla_18c9d9')}
+          title={t('annulla_18c9d9')}
           onClick={() => editor?.chain().focus().undo().run()}
         >
           <Icon name="undo" />
         </button>
         <button
           className="icon-button"
-          aria-label="Ripeti"
-          title="Ripeti"
+          aria-label={t('ripeti_6e8834')}
+          title={t('ripeti_6e8834')}
           onClick={() => editor?.chain().focus().redo().run()}
         >
           <Icon name="redo" />
         </button>
         <select
-          aria-label="Stile paragrafo"
+          aria-label={t('stile_paragrafo_27eb83')}
           value={state?.heading ?? 0}
           onChange={(event) => {
             const level = Number(event.target.value);
@@ -132,12 +133,14 @@ export function WritingEditor({
             }
           }}
         >
-          <option value={0}>Testo</option>
-          <option value={1}>Titolo 1</option>
-          <option value={2}>Titolo 2</option>
-          <option value={3}>Titolo 3</option>
+          <option value={0}>{t('testo_ebb9e6')}</option>
+          <option value={1}>{t('titolo_1_4f52f1')}</option>
+          <option value={2}>{t('titolo_2_210acf')}</option>
+          <option value={3}>{t('titolo_3_9f4bf0')}</option>
         </select>
-        <span className="toolbar-caption">Uno spazio per le tue parole</span>
+        <span className="toolbar-caption">
+          {t('uno_spazio_per_le_tue_parole_08b26e')}
+        </span>
       </div>
       {editor && <EditorTools editor={editor} settings={diagnosticSettings} />}
       <div className="editor-scroll">
@@ -146,12 +149,13 @@ export function WritingEditor({
           <h1>{document.title}</h1>
           <p className="document-kind">
             {document.kind} · {statusLabel} <span aria-hidden="true">—</span>{' '}
-            manoscritto
+            {t('manoscritto_edb027')}
           </p>
           <EditorContent editor={editor} />
           <p className="editing-notice" id="editing-notice">
-            Salvataggio automatico sul dispositivo. Crea regolarmente un backup
-            del progetto.
+            {t(
+              'salvataggio_automatico_sul_dispositivo_crea_regolarmente_un_backu_1cba00',
+            )}
           </p>
         </article>
       </div>

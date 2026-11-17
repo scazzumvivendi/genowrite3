@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useSystemTheme } from '../../hooks/useSystemTheme';
 import type { Preferences } from '../../modules/settings/preferences';
 import { RestoreDialog } from '../export/RestoreDialog';
@@ -49,12 +50,13 @@ export function ProjectChooser({
       }
     >
       <main>
-        <span className="brand-mark">g.</span>
-        <p className="section-label">GENOWRITE 3</p>
-        <h1>Uno spazio per le tue parole.</h1>
+        <span className="brand-mark">{t('g_fc3a68')}</span>
+        <p className="section-label">{t('genowrite_3_4ba304')}</p>
+        <h1>{t('uno_spazio_per_le_tue_parole_105d8f')}</h1>
         <p>
-          Scrivi e organizza i tuoi progetti su questo dispositivo. Nessun
-          account.
+          {t(
+            'scrivi_e_organizza_i_tuoi_progetti_su_questo_dispositivo_nessun_a_eaff54',
+          )}
         </p>
         <form
           onSubmit={(event) => {
@@ -63,21 +65,21 @@ export function ProjectChooser({
           }}
         >
           <label>
-            Titolo del nuovo progetto
+            {t('titolo_del_nuovo_progetto_e09a85')}
             <input
               name="title"
               required
               maxLength={500}
-              placeholder="Il mio romanzo"
+              placeholder={t('il_mio_romanzo_187307')}
               autoComplete="off"
             />
           </label>
           <button className="filled-button" disabled={busy}>
-            Crea progetto
+            {t('crea_progetto_c19c5c')}
           </button>
         </form>
         <button className="tonal" onClick={() => setRestoreDialog(true)}>
-          Ripristina backup
+          {t('ripristina_backup_597c6e')}
         </button>
         {restoreDialog && (
           <RestoreDialog
@@ -87,9 +89,11 @@ export function ProjectChooser({
         )}
         {error && <p role="alert">{error}</p>}
         <div className="panel-heading">
-          <h2>{trash ? 'Cestino progetti' : 'I tuoi progetti'}</h2>
+          <h2>
+            {trash ? t('cestino_progetti_8d4d8d') : t('i_tuoi_progetti_03664f')}
+          </h2>
           <button onClick={() => setTrash(!trash)}>
-            {trash ? 'Mostra progetti' : 'Cestino progetti'}
+            {trash ? t('mostra_progetti_f0dbe3') : t('cestino_progetti_8d4d8d')}
           </button>
         </div>
         <ul className="project-list">
@@ -99,7 +103,9 @@ export function ProjectChooser({
               <li key={project.id}>
                 <div>
                   <strong>{project.title}</strong>
-                  <small>{project.author || 'Autore non indicato'}</small>
+                  <small>
+                    {project.author || t('autore_non_indicato_4a032f')}
+                  </small>
                 </div>
                 <button
                   className="tonal"
@@ -107,19 +113,19 @@ export function ProjectChooser({
                     trash ? void restore(project.id) : onOpen(project.id)
                   }
                 >
-                  {trash ? 'Ripristina' : 'Apri'}
+                  {trash ? t('ripristina_cf1718') : t('apri_12abcf')}
                   <span className="sr-only"> {project.title}</span>
                 </button>
               </li>
             ))}
         </ul>
         {!projects.some((project) => Boolean(project.deletedAt) === trash) && (
-          <p>Nessun progetto in questa raccolta.</p>
+          <p>{t('nessun_progetto_in_questa_raccolta_aa88cb')}</p>
         )}
         <p className="local-storage-note">
-          I dati sono conservati nel browser: crea regolarmente backup JSON. La
-          cancellazione dei dati del sito li rimuove. Usa sempre lo stesso
-          indirizzo e profilo del browser.
+          {t(
+            'i_dati_sono_conservati_nel_browser_crea_regolarmente_backup_json__d60c8b',
+          )}
         </p>
       </main>
     </div>

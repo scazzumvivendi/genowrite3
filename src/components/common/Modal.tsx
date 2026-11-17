@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { confirmDiscard } from './form-state';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Icon } from './Icon';
@@ -36,7 +37,7 @@ export function Modal({
         <h2>{title}</h2>
         <button
           className="icon-button"
-          aria-label="Chiudi finestra"
+          aria-label={t('chiudi_finestra_e40186')}
           onClick={close}
         >
           <Icon name="close" />

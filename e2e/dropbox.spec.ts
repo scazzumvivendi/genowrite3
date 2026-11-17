@@ -66,9 +66,6 @@ test('Dropbox: esportazione esplicita, anteprima e importazione indipendente', a
     .getByRole('textbox', { name: 'Testo · Capitolo cloud' })
     .fill('Ultime parole da conservare.');
   await page.getByRole('button', { name: 'Esporta', exact: true }).click();
-  await page
-    .getByRole('combobox', { name: 'Formato', exact: true })
-    .selectOption('json');
   expect(exported).toBe('');
   await page
     .getByRole('button', { name: 'Esporta su Dropbox', exact: true })
@@ -104,4 +101,58 @@ test('Dropbox: esportazione esplicita, anteprima e importazione indipendente', a
     page.getByRole('button', { name: 'Apri Progetto Dropbox', exact: true }),
   ).toHaveCount(2);
   expect(errors).toEqual([]);
+});
+
+test('Dropbox automatico: pulsante visibile, invio periodico solo su modifiche e disattivazione', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    sessionStorage.setItem(
+      'genowrite3.dropbox.token',
+      JSON.stringify({
+        accessToken: 'test-token',
+        expiresAt: Date.now() + 3600000,
+      }),
+    );
+  });
+  let uploads = 0;
+  await page.route(
+    'https://content.dropboxapi.com/2/files/upload',
+    async (route) => {
+      uploads += 1;
+      await route.fulfill({
+        json: { id: 'id:copy', name: 'copy.genowrite3.json' },
+      });
+    },
+  );
+  await page.goto('/');
+  await page.getByLabel('Titolo del nuovo progetto').fill('Periodico');
+  await page
+    .getByRole('button', { name: 'Crea progetto', exact: true })
+    .click();
+  await page.getByRole('button', { name: 'Dropbox', exact: true }).click();
+  await page.clock.install();
+  await page
+    .getByRole('button', { name: 'Attiva backup automatico', exact: true })
+    .click();
+  await expect(
+    page.getByRole('button', { name: 'Disattiva backup automatico' }),
+  ).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Chiudi finestra' }).click();
+  expect(uploads).toBe(0);
+  await page.clock.fastForward(60_000);
+  await expect.poll(() => uploads).toBe(1);
+  await page.clock.fastForward(60_000);
+  await page.getByRole('button', { name: 'Dropbox', exact: true }).click();
+  await expect(
+    page.getByText('Ultimo backup automatico:', { exact: false }),
+  ).toBeVisible();
+  await page
+    .getByRole('button', { name: 'Disattiva backup automatico' })
+    .click();
+  await expect(
+    page.getByRole('button', { name: 'Attiva backup automatico', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'false');
+  await page.clock.fastForward(60_000);
+  expect(uploads).toBe(1);
 });

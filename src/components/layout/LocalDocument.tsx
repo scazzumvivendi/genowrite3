@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { writingStatusLabels } from '../../modules/manuscript/status';
 import { useEffect, useRef } from 'react';
 import type {
@@ -55,11 +56,12 @@ export function LocalDocument({
       <WritingEditor
         document={{
           title: node.title,
-          kind: node.type === 'scene' ? 'Scena' : 'Capitolo',
+          kind:
+            node.type === 'scene' ? t('scena_48829c') : t('capitolo_288e49'),
           path:
             node.type === 'scene'
-              ? 'Manoscritto / Scena'
-              : 'Manoscritto / Capitolo',
+              ? t('document.path.scene')
+              : t('document.path.chapter'),
         }}
         content={document.content}
         statusLabel={writingStatusLabels[node.status]}

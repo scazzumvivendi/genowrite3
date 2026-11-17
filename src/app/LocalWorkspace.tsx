@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import { useState } from 'react';
 import { db, readProject } from '../database/db';
 import { useLocalQuery } from '../hooks/useLocalQuery';
@@ -23,19 +24,22 @@ export function LocalWorkspace() {
     return (
       <div className="theme">
         <main className="storage-error">
-          <h1>Impossibile aprire l’archivio locale</h1>
+          <h1>{t('impossibile_aprire_l_archivio_locale_611b91')}</h1>
           <p role="alert">{boot.error}</p>
           <p>
-            Il browser potrebbe aver bloccato IndexedDB. Non cancellare i dati
-            del sito se contengono progetti.
+            {t(
+              'il_browser_potrebbe_aver_bloccato_indexeddb_non_cancellare_i_dati_f3acfc',
+            )}
           </p>
-          <button onClick={() => window.location.reload()}>Riprova</button>
+          <button onClick={() => window.location.reload()}>
+            {t('riprova_20b5f4')}
+          </button>
         </main>
       </div>
     );
   }
   if (!boot.value) {
-    return <p role="status">Apertura archivio locale…</p>;
+    return <p role="status">{t('apertura_archivio_locale_d8693e')}</p>;
   }
   return <LocalArchive data={boot.value} readError={boot.error} />;
 }
@@ -69,7 +73,9 @@ function LocalArchive({
               .put({ id: 'session', value: { projectId: id } })
               .catch((reason: unknown) =>
                 setSessionError(
-                  `Impossibile ricordare l’ultimo progetto: ${String(reason)}`,
+                  t('impossibile_ricordare_l_ultimo_progetto_value0_07c8a5', {
+                    value0: String(reason),
+                  }),
                 ),
               );
           }}
@@ -110,10 +116,12 @@ function ProjectLoader({
     [projectId],
   );
   if (query.error && !query.value) {
-    return <p role="alert">Errore di lettura: {query.error}</p>;
+    return (
+      <p role="alert">{t('archive.readError', { reason: query.error })}</p>
+    );
   }
   if (!query.value) {
-    return <p role="status">Apertura progetto…</p>;
+    return <p role="status">{t('apertura_progetto_047506')}</p>;
   }
   return (
     <ProjectSession

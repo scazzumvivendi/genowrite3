@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { DropboxPanel } from '../dropbox/DropboxPanel';
 import { useState } from 'react';
 import { db } from '../../database/db';
@@ -24,7 +25,7 @@ export function RestoreDialog({
         return;
       }
       if (file.size > 100_000_000) {
-        throw new Error('Il backup supera 100 MB.');
+        throw new Error(t('il_backup_supera_100_mb_f34da0'));
       }
       setBackup(parseBackup(await file.text()));
       setError('');
@@ -35,7 +36,7 @@ export function RestoreDialog({
   }
   return (
     <Modal
-      title="Ripristina backup JSON"
+      title={t('ripristina_backup_json_5ffabd')}
       onClose={onClose}
       protectContent={false}
     >
@@ -46,7 +47,7 @@ export function RestoreDialog({
         }}
       />
       <label>
-        File di backup
+        {t('file_di_backup_0249db')}
         <input
           type="file"
           accept=".json,application/json"
@@ -57,14 +58,17 @@ export function RestoreDialog({
         <>
           <h3>{backup.snapshot.project.title}</h3>
           <p>
-            {backup.snapshot.nodes.length} elementi,{' '}
-            {backup.snapshot.documents.length} documenti,{' '}
-            {backup.snapshot.references.length} schede,{' '}
-            {backup.snapshot.notes.length} note.
+            {t('restore.summary', {
+              nodes: backup.snapshot.nodes.length,
+              documents: backup.snapshot.documents.length,
+              references: backup.snapshot.references.length,
+              notes: backup.snapshot.notes.length,
+            })}
           </p>
           <p>
-            Verrà creato un nuovo progetto con identificatori indipendenti.
-            Nessun progetto esistente sarà sovrascritto.
+            {t(
+              'verra_creato_un_nuovo_progetto_con_identificatori_indipendenti_ne_3f1a7f',
+            )}
           </p>
           <button
             className="filled-button"
@@ -77,7 +81,7 @@ export function RestoreDialog({
                 .finally(() => setBusy(false));
             }}
           >
-            Ripristina come nuovo progetto
+            {t('ripristina_come_nuovo_progetto_c6862b')}
           </button>
         </>
       )}

@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import type { LibraryKind } from '../library/LibraryDialog';
 import type {
   ManuscriptNode,
@@ -108,7 +109,7 @@ export function ProjectNavigation({
     <aside
       className="navigation-panel side-panel"
       id="manuscript-navigation"
-      aria-label="Navigazione progetto"
+      aria-label={t('navigazione_progetto_1aa2a6')}
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
           onClose();
@@ -116,10 +117,10 @@ export function ProjectNavigation({
       }}
     >
       <div className="panel-heading">
-        <h2>Manoscritto</h2>
+        <h2>{t('manoscritto_bc53cf')}</h2>
         <button
           className="icon-button"
-          aria-label="Chiudi navigazione"
+          aria-label={t('chiudi_navigazione_94a1a4')}
           onClick={onClose}
         >
           <Icon name="close" />
@@ -132,12 +133,12 @@ export function ProjectNavigation({
         </div>
         <div className="navigation-actions">
           <button className="tonal" onClick={onCreate}>
-            Nuovo elemento
+            {t('nuovo_elemento_8c610b')}
           </button>
-          <button onClick={onManage}>Organizza</button>
-          <button onClick={onSearch}>Cerca nel progetto</button>
+          <button onClick={onManage}>{t('organizza_916b93')}</button>
+          <button onClick={onSearch}>{t('cerca_nel_progetto_33398f')}</button>
         </div>
-        <nav className="manuscript-list" aria-label="Manoscritto">
+        <nav className="manuscript-list" aria-label={t('manoscritto_bc53cf')}>
           {branch(null)}
         </nav>
         <div
@@ -152,16 +153,16 @@ export function ProjectNavigation({
             );
           }}
         >
-          Trascina qui per spostare alla radice
+          {t('trascina_qui_per_spostare_alla_radice_77519f')}
         </div>
         <div className="library-preview">
-          <p className="section-label">BIBLIOTECA</p>
+          <p className="section-label">{t('biblioteca_43ea03')}</p>
           {(
             [
-              ['character', 'Personaggi'],
-              ['location', 'Luoghi'],
-              ['object', 'Oggetti'],
-              ['note', 'Note e ricerca'],
+              ['character', t('personaggi_5ab105')],
+              ['location', t('luoghi_04b8bf')],
+              ['object', t('oggetti_1de452')],
+              ['note', t('note_e_ricerca_81890c')],
             ] as const
           ).map(([kind, label]) => (
             <button key={kind} onClick={() => onLibrary(kind)}>
@@ -171,7 +172,9 @@ export function ProjectNavigation({
         </div>
         {!nodes.length && (
           <p className="empty-hint">
-            Inizia creando un capitolo. Volumi, parti e scene sono facoltativi.
+            {t(
+              'inizia_creando_un_capitolo_volumi_parti_e_scene_sono_facoltativi_2fbb6c',
+            )}
           </p>
         )}
       </div>

@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import {
   projectService,
   type ProjectService,
@@ -13,7 +14,7 @@ export function duplicateNode(
       (node) => node.id === id && !node.deletedAt,
     );
     if (!root || !['chapter', 'scene'].includes(root.type)) {
-      throw new Error('Si possono duplicare capitoli o scene.');
+      throw new Error(t('si_possono_duplicare_capitoli_o_scene_61cd59'));
     }
     const originals = [
       root,
@@ -41,7 +42,7 @@ export function duplicateNode(
         updatedAt: now,
       };
       if (original.id === id) {
-        copy.title = `${original.title} (copia)`;
+        copy.title = t('value0_copia_3e037f', { value0: original.title });
       }
       if (original.documentId) {
         const document = snapshot.documents.find(

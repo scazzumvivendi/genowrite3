@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { DropboxPanel } from '../dropbox/DropboxPanel';
 import { useState } from 'react';
 import { db, readProject } from '../../database/db';
@@ -93,36 +94,47 @@ export function ExportDialog({
   }[] = [
     {
       key: 'fontSize',
-      label: 'Dimensione carattere (pt)',
+      label: t('dimensione_carattere_pt_98df74'),
       min: 8,
       max: 72,
       step: 1,
     },
-    { key: 'lineSpacing', label: 'Interlinea DOCX', min: 1, max: 3, step: 0.1 },
+    {
+      key: 'lineSpacing',
+      label: t('interlinea_docx_3d6dcb'),
+      min: 1,
+      max: 3,
+      step: 0.1,
+    },
     ...(['Top', 'Right', 'Bottom', 'Left'] as const).map((side) => ({
       key: `margin${side}` as keyof DocxProfile,
-      label: `Margine ${{ Top: 'superiore', Right: 'destro', Bottom: 'inferiore', Left: 'sinistro' }[side]} (mm)`,
+      label: {
+        Top: t('export.marginTop'),
+        Right: t('export.marginRight'),
+        Bottom: t('export.marginBottom'),
+        Left: t('export.marginLeft'),
+      }[side],
       min: 0,
       max: 70,
       step: 1,
     })),
     {
       key: 'firstLineIndent',
-      label: 'Rientro prima riga (mm)',
+      label: t('rientro_prima_riga_mm_5c0523'),
       min: 0,
       max: 40,
       step: 1,
     },
     {
       key: 'paragraphSpacing',
-      label: 'Spazio dopo paragrafo (pt)',
+      label: t('spazio_dopo_paragrafo_pt_0d701a'),
       min: 0,
       max: 72,
       step: 1,
     },
     {
       key: 'chapterFontSize',
-      label: 'Dimensione titolo capitolo (pt)',
+      label: t('dimensione_titolo_capitolo_pt_daf8b6'),
       min: 8,
       max: 72,
       step: 1,
@@ -130,10 +142,16 @@ export function ExportDialog({
   ];
   return (
     <Modal
-      title="Esporta e crea backup"
+      title={t('esporta_e_crea_backup_287741')}
       onClose={onClose}
       protectContent={false}
     >
+      <DropboxPanel
+        prepareExport={async () => {
+          await flush();
+          return exportBackup(db, snapshot.project.id);
+        }}
+      />
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -141,29 +159,21 @@ export function ExportDialog({
         }}
       >
         <label>
-          Formato
+          {t('formato_73e180')}
           <select
             value={format}
             onChange={(event) => setFormat(event.target.value)}
           >
-            <option value="docx">DOCX</option>
-            <option value="txt">TXT UTF-8</option>
-            <option value="json">Backup completo JSON</option>
+            <option value="docx">{t('docx_f0abcf')}</option>
+            <option value="txt">{t('txt_utf_8_30c2af')}</option>
+            <option value="json">{t('backup_completo_json_ca72b9')}</option>
           </select>
         </label>
-        {format === 'json' && (
-          <DropboxPanel
-            prepareExport={async () => {
-              await flush();
-              return exportBackup(db, snapshot.project.id);
-            }}
-          />
-        )}
         {format === 'json' ? (
           <p>
-            Include manoscritto, biblioteca, note, relazioni, cestino e
-            impostazioni del progetto. Le preferenze globali dell’app sono
-            escluse.
+            {t(
+              'include_manoscritto_biblioteca_note_relazioni_cestino_e_impostazi_7930ca',
+            )}
           </p>
         ) : (
           <>
@@ -173,11 +183,11 @@ export function ExportDialog({
                 checked={scoped}
                 onChange={(event) => setScoped(event.target.checked)}
               />
-              Esporta solo gli elementi selezionati
+              {t('esporta_solo_gli_elementi_selezionati_6773ed')}
             </label>
             {scoped && (
               <fieldset>
-                <legend>Ambito del manoscritto</legend>
+                <legend>{t('ambito_del_manoscritto_721dfc')}</legend>
                 {snapshot.nodes
                   .filter(
                     (node) =>
@@ -214,7 +224,7 @@ export function ExportDialog({
                   })
                 }
               />
-              Includi titolo progetto
+              {t('includi_titolo_progetto_cbfa1f')}
             </label>
             <label className="checkbox-label">
               <input
@@ -227,11 +237,11 @@ export function ExportDialog({
                   })
                 }
               />
-              Includi titoli scene
+              {t('includi_titoli_scene_5e2008')}
             </label>
             {format === 'txt' && (
               <label>
-                Separatore tra capitoli
+                {t('separatore_tra_capitoli_41eb66')}
                 <input
                   value={options.chapterSeparator}
                   onChange={(event) =>
@@ -248,7 +258,7 @@ export function ExportDialog({
         {format === 'docx' && (
           <>
             <label>
-              Profilo
+              {t('profilo_056365')}
               <select
                 value={preset}
                 onChange={(event) => {
@@ -260,12 +270,12 @@ export function ExportDialog({
                   }
                 }}
               >
-                <option value="manuscript">Manoscritto</option>
-                <option value="custom">Personalizzato</option>
+                <option value="manuscript">{t('manoscritto_bc53cf')}</option>
+                <option value="custom">{t('personalizzato_792566')}</option>
               </select>
             </label>
             <label>
-              Font DOCX
+              {t('font_docx_8ad42c')}
               <input
                 value={profile.font}
                 onChange={(event) => {
@@ -296,9 +306,9 @@ export function ExportDialog({
             ))}
             {(
               [
-                ['chapterBold', 'Titoli capitolo in grassetto'],
-                ['pageBreaks', 'Nuova pagina per capitolo'],
-                ['pageNumbers', 'Numeri di pagina'],
+                ['chapterBold', t('titoli_capitolo_in_grassetto_50f55a')],
+                ['pageBreaks', t('nuova_pagina_per_capitolo_47987b')],
+                ['pageNumbers', t('numeri_di_pagina_6c5d6e')],
               ] as const
             ).map(([key, label]) => (
               <label className="checkbox-label" key={key}>
@@ -313,7 +323,7 @@ export function ExportDialog({
               </label>
             ))}
             <label>
-              Intestazione
+              {t('intestazione_314af0')}
               <input
                 value={profile.header}
                 onChange={(event) =>
@@ -322,7 +332,7 @@ export function ExportDialog({
               />
             </label>
             <label>
-              Piè di pagina
+              {t('pie_di_pagina_2e8cd8')}
               <input
                 value={profile.footer}
                 onChange={(event) =>
@@ -333,8 +343,9 @@ export function ExportDialog({
           </>
         )}
         <p>
-          Note, sinossi e schede non sono incluse nel manoscritto. La
-          generazione avviene sul dispositivo.
+          {t(
+            'il_backup_json_completo_include_anche_note_sinossi_e_schede_docx__5e1a62',
+          )}
         </p>
         {error && <p role="alert">{error}</p>}
         <button
@@ -343,7 +354,7 @@ export function ExportDialog({
             busy || (format !== 'json' && scoped && !options.scope.length)
           }
         >
-          {busy ? 'Generazione…' : 'Scarica file'}
+          {busy ? t('generazione_f8fb50') : t('scarica_file_bee62f')}
         </button>
       </form>
     </Modal>

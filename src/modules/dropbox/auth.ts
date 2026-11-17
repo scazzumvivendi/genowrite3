@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 const pendingKey = 'genowrite3.dropbox.pending';
 const tokenKey = 'genowrite3.dropbox.token';
 export const clientId =
@@ -93,12 +94,16 @@ async function complete() {
     Date.now() - pending.createdAt > 600_000
   ) {
     throw new Error(
-      'Collegamento Dropbox scaduto o non valido. Riprova dal pulsante Collega Dropbox.',
+      t(
+        'collegamento_dropbox_scaduto_o_non_valido_riprova_dal_pulsante_co_95d447',
+      ),
     );
   }
   if (denied || !code) {
     throw new Error(
-      'Collegamento Dropbox annullato. I progetti locali sono disponibili.',
+      t(
+        'collegamento_dropbox_annullato_i_progetti_locali_sono_disponibili_68fc74',
+      ),
     );
   }
   const response = await fetch('https://api.dropboxapi.com/oauth2/token', {
@@ -113,7 +118,9 @@ async function complete() {
     }),
   });
   if (!response.ok) {
-    throw new Error('Impossibile collegare Dropbox. Riprova il collegamento.');
+    throw new Error(
+      t('impossibile_collegare_dropbox_riprova_il_collegamento_5c1bed'),
+    );
   }
   const token = await response.json();
   if (
@@ -121,7 +128,7 @@ async function complete() {
     !Number.isFinite(token.expires_in) ||
     token.expires_in <= 0
   ) {
-    throw new Error('Risposta Dropbox non valida.');
+    throw new Error(t('risposta_dropbox_non_valida_8af7d6'));
   }
   sessionStorage.setItem(
     tokenKey,

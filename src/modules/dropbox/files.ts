@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { parseBackup } from '../backup/backup';
 import { safeFilename } from '../export/manuscript';
 import { disconnectDropbox, dropboxToken } from './auth';
@@ -16,32 +17,42 @@ async function request(
 ) {
   const token = dropboxToken();
   if (!token) {
-    throw new Error('Collega nuovamente Dropbox: la sessione è scaduta.');
+    throw new Error(
+      t('collega_nuovamente_dropbox_la_sessione_e_scaduta_e4f6f8'),
+    );
   }
   let response: Response;
   try {
     response = await fetch(url, {
       method: 'POST',
-      headers: { ...headers, Authorization: `Bearer ${token}` },
+      headers: {
+        ...headers,
+        Authorization: `Bearer ${token}`,
+      },
       body: body ?? null,
       signal: AbortSignal.timeout(60_000),
     });
   } catch {
     throw new Error(
-      'Dropbox non raggiungibile. Controlla la connessione e riprova.',
+      t('dropbox_non_raggiungibile_controlla_la_connessione_e_riprova_be02b8'),
     );
   }
   if (response.status === 401) {
     disconnectDropbox();
     throw new Error(
-      'Sessione Dropbox scaduta o revocata. Collega nuovamente Dropbox.',
+      t(
+        'sessione_dropbox_scaduta_o_revocata_collega_nuovamente_dropbox_03cde6',
+      ),
     );
   }
   if (!response.ok) {
     throw new Error(
       response.status === 429
-        ? 'Troppe richieste a Dropbox. Attendi e riprova.'
-        : `Operazione Dropbox non riuscita (${response.status}). Nessun progetto locale è stato modificato.`,
+        ? t('troppe_richieste_a_dropbox_attendi_e_riprova_b529ca')
+        : t(
+            'operazione_dropbox_non_riuscita_value0_nessun_progetto_locale_e_s_2e70bb',
+            { value0: response.status },
+          ),
     );
   }
   return response;
@@ -92,7 +103,7 @@ export async function uploadDropboxBackup(text: string) {
   const backup = parseBackup(text);
   const blob = new Blob([text], { type: 'application/octet-stream' });
   if (blob.size > maximumSize) {
-    throw new Error('Il backup supera 100 MB. Usa il backup locale.');
+    throw new Error(t('il_backup_supera_100_mb_usa_il_backup_locale_4c7c89'));
   }
   const stamp = new Date().toISOString().replace(/[:.]/gu, '-');
   const name = `${safeFilename(backup.snapshot.project.title).slice(0, 100)}-${stamp}-${crypto.randomUUID()}.genowrite3.json`;
@@ -113,7 +124,7 @@ export async function uploadDropboxBackup(text: string) {
 }
 export async function downloadDropboxBackup(file: DropboxFile) {
   if (file.size > maximumSize) {
-    throw new Error('Il backup supera 100 MB.');
+    throw new Error(t('il_backup_supera_100_mb_f34da0'));
   }
   const response = await request(
     'https://content.dropboxapi.com/2/files/download',
@@ -121,7 +132,7 @@ export async function downloadDropboxBackup(file: DropboxFile) {
   );
   const blob = await response.blob();
   if (blob.size > maximumSize) {
-    throw new Error('Il backup supera 100 MB.');
+    throw new Error(t('il_backup_supera_100_mb_f34da0'));
   }
   return parseBackup(await blob.text());
 }

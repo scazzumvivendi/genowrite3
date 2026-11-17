@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import {
   AlignmentType,
   Document,
@@ -52,7 +53,7 @@ export function buildDocx(
       (value) => typeof value !== 'boolean',
     )
   ) {
-    throw new Error('Profilo DOCX non valido.');
+    throw new Error(t('profilo_docx_non_valido_6a37f5'));
   }
   const numbers = [
     profile.fontSize,
@@ -78,7 +79,7 @@ export function buildDocx(
       profile.marginBottom,
     ) > 70
   ) {
-    throw new Error('Profilo DOCX non valido.');
+    throw new Error(t('profilo_docx_non_valido_6a37f5'));
   }
   const blocks = manuscriptBlocks(snapshot, options);
   const listDefinitions = new Map<
@@ -165,7 +166,7 @@ export function buildDocx(
       paragraphStyles: [
         {
           id: 'ChapterTitle',
-          name: 'Chapter title',
+          name: t('export.chapterStyle'),
           basedOn: 'Heading1',
           next: 'Normal',
           run: { size: profile.chapterFontSize * 2, bold: profile.chapterBold },

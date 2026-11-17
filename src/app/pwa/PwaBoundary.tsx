@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useEffect, useState, type ReactNode } from 'react';
 import { flushActive } from './flush-active';
 
@@ -39,7 +40,11 @@ export function PwaBoundary({ children }: { children: ReactNode }) {
         });
       })
       .catch((reason: unknown) =>
-        setError(`Cache offline non disponibile: ${String(reason)}`),
+        setError(
+          t('cache_offline_non_disponibile_value0_7173fd', {
+            value0: String(reason),
+          }),
+        ),
       );
     function prompt(event: Event) {
       event.preventDefault();
@@ -61,7 +66,9 @@ export function PwaBoundary({ children }: { children: ReactNode }) {
       );
       waiting?.postMessage('ACTIVATE_UPDATE');
     } catch (reason) {
-      setError(`Aggiornamento sospeso: ${String(reason)}`);
+      setError(
+        t('aggiornamento_sospeso_value0_d4e916', { value0: String(reason) }),
+      );
     }
   }
   return (
@@ -70,14 +77,16 @@ export function PwaBoundary({ children }: { children: ReactNode }) {
       {(waiting || install || error) && (
         <div
           className="pwa-notice"
-          aria-label="Installazione e aggiornamenti"
+          aria-label={t('installazione_e_aggiornamenti_140b2b')}
           role="region"
         >
           {error && <p role="alert">{error}</p>}
           {waiting && (
             <>
-              <span>È disponibile una nuova versione.</span>
-              <button onClick={() => void update()}>Salva e aggiorna</button>
+              <span>{t('e_disponibile_una_nuova_versione_168d1c')}</span>
+              <button onClick={() => void update()}>
+                {t('salva_e_aggiorna_77b3a0')}
+              </button>
             </>
           )}
           {install && (
@@ -86,7 +95,7 @@ export function PwaBoundary({ children }: { children: ReactNode }) {
                 void install.prompt().then(() => setInstall(undefined))
               }
             >
-              Installa Genowrite
+              {t('installa_genowrite_e2e0d3')}
             </button>
           )}
         </div>

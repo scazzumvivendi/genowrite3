@@ -222,7 +222,8 @@ Project-level metadata:
 
 Il vincolo originale che esclude API remote e trasmissione di contenuti ammette
 ora importazione ed esportazione **opzionali ed esplicite** di backup JSON su
-Dropbox. Nessuna sincronizzazione automatica, account Genowrite o backend.
+Dropbox. Backup periodico in uscita opzionale, attivato per progetto, ogni minuto solo
+con modifiche e scheda visibile. Nessun merge, account Genowrite o backend.
 L’archivio locale e l’uso offline rimangono indipendenti da Dropbox. Ogni upload
 crea una copia distinta; il download passa dalla validazione e dall’anteprima,
 poi dalla conferma di ripristino come nuovo progetto. Token brevi nella sessione

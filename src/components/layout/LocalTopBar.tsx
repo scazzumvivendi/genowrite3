@@ -1,11 +1,12 @@
+import { t } from '../../i18n';
 import { Icon } from '../common/Icon';
 import type { SaveState } from '../../modules/storage/draft-saver';
 
 const saveLabels: Record<SaveState, string> = {
-  saved: 'Salvato sul dispositivo',
-  pending: 'Modifiche da salvare…',
-  saving: 'Salvataggio…',
-  error: 'Errore di salvataggio',
+  saved: t('salvato_sul_dispositivo_2f68d3'),
+  pending: t('modifiche_da_salvare_65ace4'),
+  saving: t('salvataggio_c4f57f'),
+  error: t('errore_di_salvataggio_a121d2'),
 };
 export function LocalTopBar({
   projectTitle,
@@ -21,6 +22,8 @@ export function LocalTopBar({
   onProperties,
   onPreferences,
   onExport,
+  onDropbox,
+  dropboxActive,
 }: {
   projectTitle: string;
   title: string;
@@ -35,14 +38,16 @@ export function LocalTopBar({
   onProperties: () => void;
   onPreferences: () => void;
   onExport: () => void;
+  onDropbox: () => void;
+  dropboxActive: boolean;
 }) {
   return (
     <header className="top-bar product-top-bar">
       <div className="brand-context">
         <button
           className="brand-mark"
-          aria-label="Progetti"
-          title="Progetti"
+          aria-label={t('progetti_d7805e')}
+          title={t('progetti_d7805e')}
           onClick={onProjects}
         >
           <img
@@ -56,7 +61,9 @@ export function LocalTopBar({
           <button
             className="project-title-button"
             onClick={onProperties}
-            aria-label={`Proprietà progetto · ${projectTitle}`}
+            aria-label={t('proprieta_progetto_value0_d08d50', {
+              value0: projectTitle,
+            })}
           >
             {projectTitle}
           </button>
@@ -70,12 +77,12 @@ export function LocalTopBar({
       <div
         className="workspace-actions"
         role="group"
-        aria-label="Strumenti dello spazio di scrittura"
+        aria-label={t('strumenti_dello_spazio_di_scrittura_a9ee8d')}
       >
         <button
           id="navigation-toggle"
           className="icon-button"
-          aria-label="Navigazione"
+          aria-label={t('navigazione_1e7ed2')}
           aria-expanded={navigation}
           disabled={zen}
           onClick={onNavigation}
@@ -85,7 +92,7 @@ export function LocalTopBar({
         <button
           id="inspector-toggle"
           className="icon-button"
-          aria-label="Dettagli documento"
+          aria-label={t('dettagli_documento_09b5b5')}
           aria-expanded={inspector}
           disabled={zen}
           onClick={onInspector}
@@ -94,7 +101,7 @@ export function LocalTopBar({
         </button>
         <button
           className="icon-button"
-          aria-label="Modalità Zen"
+          aria-label={t('modalita_zen_7ce6af')}
           aria-pressed={zen}
           onClick={onZen}
         >
@@ -102,19 +109,32 @@ export function LocalTopBar({
         </button>
         <button
           className="icon-button"
-          aria-label="Preferenze"
+          aria-label={t('preferenze_7a5377')}
           onClick={onPreferences}
         >
           <Icon name="settings" />
         </button>
         <button
+          type="button"
+          onClick={onDropbox}
+          aria-label={t('dropbox_4750d0')}
+          title={
+            dropboxActive
+              ? t('backup_dropbox_automatico_attivo_2b04ad')
+              : t('backup_dropbox_59f66f')
+          }
+        >
+          {t('dropbox_4750d0')}
+          {dropboxActive ? t('auto_e19d2c') : ''}
+        </button>
+        <button
           className="export-button"
           onClick={onExport}
-          aria-label="Esporta"
-          title="Esporta e crea backup"
+          aria-label={t('esporta_2c4c51')}
+          title={t('esporta_e_crea_backup_287741')}
         >
           <Icon name="export" />
-          <span>Esporta</span>
+          <span>{t('esporta_2c4c51')}</span>
         </button>
       </div>
     </header>

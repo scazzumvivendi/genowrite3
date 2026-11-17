@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { readProject, type GenowriteDatabase } from '../../database/db';
 import type { ProjectSnapshot } from '../manuscript/model';
 import { validateSnapshot } from '../manuscript/validation';
@@ -11,31 +12,31 @@ export interface ProjectBackup {
 
 function record(value: unknown): Record<string, unknown> {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
-    throw new Error('Oggetto JSON non valido.');
+    throw new Error(t('oggetto_json_non_valido_f137ed'));
   }
   return value as Record<string, unknown>;
 }
 function strings(value: Record<string, unknown>, fields: string[]) {
   for (const field of fields) {
     if (typeof value[field] !== 'string') {
-      throw new Error(`Campo non valido: ${field}.`);
+      throw new Error(t('campo_non_valido_value0_d1a0bd', { value0: field }));
     }
   }
 }
 function identifiers(value: unknown) {
   if (!Array.isArray(value) || value.some((item) => typeof item !== 'string')) {
-    throw new Error('Elenco di identificatori non valido.');
+    throw new Error(t('elenco_di_identificatori_non_valido_2487fa'));
   }
 }
 
 /** Prima si validano tutte le strutture, poi si autorizza una transazione. */
 export function parseBackup(text: string): ProjectBackup {
   if (text.length > 100_000_000) {
-    throw new Error('Backup troppo grande (limite 100 MB).');
+    throw new Error(t('backup_troppo_grande_limite_100_mb_cef12c'));
   }
   const backup = record(JSON.parse(text));
   if (backup.format !== 'genowrite3' || backup.version !== 1) {
-    throw new Error('Formato o versione del backup non supportati.');
+    throw new Error(t('formato_o_versione_del_backup_non_supportati_b52b1e'));
   }
   strings(backup, ['exportedAt']);
   const snapshot = record(backup.snapshot);
@@ -59,7 +60,9 @@ export function parseBackup(text: string): ProjectBackup {
   ]) {
     const rows = snapshot[key];
     if (!Array.isArray(rows) || rows.length > 100_000) {
-      throw new Error(`Collezione non valida: ${key}.`);
+      throw new Error(
+        t('collezione_non_valida_value0_e012aa', { value0: key }),
+      );
     }
     for (const input of rows) {
       const row = record(input);
@@ -86,7 +89,7 @@ export function parseBackup(text: string): ProjectBackup {
             'final',
           ].includes(String(row.status))
         ) {
-          throw new Error('Nodo non valido.');
+          throw new Error(t('nodo_non_valido_bd26c1'));
         }
       }
       if (key === 'documents') {
@@ -102,14 +105,14 @@ export function parseBackup(text: string): ProjectBackup {
           'updatedAt',
         ]);
         if (!['character', 'location', 'object'].includes(String(row.kind))) {
-          throw new Error('Tipo di scheda non valido.');
+          throw new Error(t('tipo_di_scheda_non_valido_e65c73'));
         }
         if (
           Object.values(record(row.fields)).some(
             (value) => typeof value !== 'string',
           )
         ) {
-          throw new Error('Campi della scheda non validi.');
+          throw new Error(t('campi_della_scheda_non_validi_1aaf55'));
         }
       }
       if (key === 'notes') {
@@ -117,7 +120,7 @@ export function parseBackup(text: string): ProjectBackup {
         if (
           !['project_note', 'research', 'synopsis'].includes(String(row.kind))
         ) {
-          throw new Error('Tipo di nota non valido.');
+          throw new Error(t('tipo_di_nota_non_valido_ebc208'));
         }
         identifiers(row.linkedNodeIds);
         identifiers(row.linkedReferenceIds);
@@ -135,11 +138,11 @@ export function parseBackup(text: string): ProjectBackup {
             String(row.relationType),
           )
         ) {
-          throw new Error('Tipo di collegamento non valido.');
+          throw new Error(t('tipo_di_collegamento_non_valido_4e23b0'));
         }
       }
       if (row.deletedAt !== undefined && typeof row.deletedAt !== 'string') {
-        throw new Error('Data di eliminazione non valida.');
+        throw new Error(t('data_di_eliminazione_non_valida_b033d1'));
       }
     }
   }
@@ -148,7 +151,7 @@ export function parseBackup(text: string): ProjectBackup {
       ([key, value]) => key === '__proto__' || typeof value !== 'string',
     )
   ) {
-    throw new Error('Impostazioni progetto non valide.');
+    throw new Error(t('impostazioni_progetto_non_valide_433188'));
   }
   const result = backup as unknown as ProjectBackup;
   validateSnapshot(result.snapshot);

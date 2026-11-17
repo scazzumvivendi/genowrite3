@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 import { countContent, type CachedCounts } from '../modules/statistics/counts';
 import Dexie, { type Table } from 'dexie';
 import type {
@@ -70,7 +71,7 @@ export async function readProject(
 ): Promise<ProjectSnapshot> {
   const project = await database.projects.get(id);
   if (!project) {
-    throw new Error('Progetto non trovato.');
+    throw new Error(t('progetto_non_trovato_05065b'));
   }
   const [nodes, documents, references, notes, relations, settings] =
     await Promise.all([

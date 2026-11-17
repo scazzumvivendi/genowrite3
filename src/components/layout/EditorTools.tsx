@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { useState } from 'react';
 import { useEditorState, type Editor } from '@tiptap/react';
 import { diagnose, type RuleSettings } from '../../modules/rules/engine';
@@ -47,7 +48,7 @@ export function EditorTools({
           aria-expanded={panel === 'find'}
           onClick={() => setPanel(panel === 'find' ? undefined : 'find')}
         >
-          Trova e sostituisci
+          {t('trova_e_sostituisci_c56be1')}
         </button>
         <button
           aria-expanded={panel === 'diagnostics'}
@@ -55,28 +56,26 @@ export function EditorTools({
             setPanel(panel === 'diagnostics' ? undefined : 'diagnostics')
           }
         >
-          Segnalazioni ({visible.length})
+          {t('editor.diagnostics', { count: visible.length })}
         </button>
       </div>
       {panel === 'find' && (
         <div className="find-panel">
           <label>
-            Trova nel documento
+            {t('trova_nel_documento_dd521a')}
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
           </label>
           <label>
-            Sostituisci con
+            {t('sostituisci_con_9d8103')}
             <input
               value={replacement}
               onChange={(event) => setReplacement(event.target.value)}
             />
           </label>
-          <span>
-            {matches.length} risultati · distingue maiuscole/minuscole
-          </span>
+          <span>{t('editor.findResults', { count: matches.length })}</span>
           <button
             disabled={!matches.length}
             onClick={() => {
@@ -92,7 +91,7 @@ export function EditorTools({
                 .run();
             }}
           >
-            Successivo
+            {t('successivo_18c4c9')}
           </button>
           <button
             disabled={!matches.length}
@@ -107,10 +106,10 @@ export function EditorTools({
               editor.commands.focus();
             }}
           >
-            Sostituisci
+            {t('sostituisci_3260dc')}
           </button>
           <button disabled={!matches.length} onClick={replaceAll}>
-            Sostituisci tutti
+            {t('sostituisci_tutti_d3559c')}
           </button>
         </div>
       )}
@@ -138,12 +137,14 @@ export function EditorTools({
                   ])
                 }
               >
-                Ignora
+                {t('ignora_9d0dbb')}
               </button>
             </li>
           ))}
-          {!visible.length && <li>Nessuna segnalazione.</li>}
-          {visible.length > 100 && <li>Mostrate le prime 100 segnalazioni.</li>}
+          {!visible.length && <li>{t('nessuna_segnalazione_12b677')}</li>}
+          {visible.length > 100 && (
+            <li>{t('mostrate_le_prime_100_segnalazioni_a0a511')}</li>
+          )}
         </ul>
       )}
     </div>

@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { countContent } from '../statistics/counts';
 import type { JSONContent } from '@tiptap/core';
 import { db, readProject, type GenowriteDatabase } from '../../database/db';
@@ -43,7 +44,7 @@ export class ProjectService {
         const snapshot = await readProject(this.database, projectId);
         if (snapshot.project.deletedAt) {
           throw new Error(
-            'Ripristina il progetto dal cestino prima di modificarlo.',
+            t('ripristina_il_progetto_dal_cestino_prima_di_modificarlo_236269'),
           );
         }
         const previousRelations = snapshot.relations.map(
@@ -83,7 +84,7 @@ export class ProjectService {
     await this.database.transaction('rw', this.database.projects, async () => {
       const project = await this.database.projects.get(projectId);
       if (!project) {
-        throw new Error('Progetto non trovato.');
+        throw new Error(t('progetto_non_trovato_05065b'));
       }
       if (deleted) {
         project.deletedAt = new Date().toISOString();
@@ -149,7 +150,7 @@ export class ProjectService {
     return this.mutate(projectId, (snapshot) => {
       const node = snapshot.nodes.find((n) => n.id === id && !n.deletedAt);
       if (!node) {
-        throw new Error('Elemento non trovato.');
+        throw new Error(t('elemento_non_trovato_bee2a6'));
       }
       Object.assign(node, values, { updatedAt: new Date().toISOString() });
     });
@@ -163,7 +164,7 @@ export class ProjectService {
     return this.mutate(projectId, (snapshot) => {
       const node = snapshot.nodes.find((n) => n.id === id && !n.deletedAt);
       if (!node) {
-        throw new Error('Elemento non trovato.');
+        throw new Error(t('elemento_non_trovato_bee2a6'));
       }
       assertParent(snapshot.nodes, node.type, parentId, id);
       const siblings = snapshot.nodes
@@ -180,7 +181,7 @@ export class ProjectService {
     return this.mutate(projectId, (snapshot) => {
       const chapter = snapshot.nodes.find((n) => n.id === id && !n.deletedAt);
       if (chapter?.type !== 'chapter' || chapter.mode !== 'direct') {
-        throw new Error('Seleziona un capitolo diretto.');
+        throw new Error(t('seleziona_un_capitolo_diretto_722b8b'));
       }
       const document = snapshot.documents.find(
         (doc) => doc.id === chapter.documentId,
@@ -190,7 +191,7 @@ export class ProjectService {
         projectId,
         parentId: id,
         type: 'scene',
-        title: 'Scena 1',
+        title: t('scena_1_610894'),
         order: 0,
         synopsis: '',
         status: chapter.status,
@@ -230,7 +231,9 @@ export class ProjectService {
           snapshot.nodes.filter((n) => n.parentId === id).length !== 1
         ) {
           throw new Error(
-            'Il capitolo è cambiato: annullamento non sicuro. Il testo è conservato nella scena.',
+            t(
+              'il_capitolo_e_cambiato_annullamento_non_sicuro_il_testo_e_conserv_756425',
+            ),
           );
         }
         chapter.mode = 'direct';
@@ -248,7 +251,7 @@ export class ProjectService {
     return this.mutate(projectId, (snapshot) => {
       const root = snapshot.nodes.find((n) => n.id === id);
       if (!root) {
-        throw new Error('Elemento non trovato.');
+        throw new Error(t('elemento_non_trovato_bee2a6'));
       }
       const oldTimestamp = root.deletedAt;
       const stamp = new Date().toISOString();
@@ -284,11 +287,13 @@ export class ProjectService {
       async () => {
         const document = await this.database.documents.get(id);
         if (!document) {
-          throw new Error('Documento non trovato.');
+          throw new Error(t('documento_non_trovato_daca01'));
         }
         if (document.revision !== expectedRevision) {
           throw new Error(
-            'Il documento è cambiato in un’altra scheda. Le modifiche non salvate sono ancora aperte: copiale prima di ricaricare.',
+            t(
+              'il_documento_e_cambiato_in_un_altra_scheda_le_modifiche_non_salva_182ed9',
+            ),
           );
         }
         document.content = content;

@@ -1,3 +1,4 @@
+import { t, locale } from '../../i18n';
 import { useState } from 'react';
 import {
   connectDropbox,
@@ -39,11 +40,11 @@ export function DropboxPanel({
   }
   return (
     <fieldset disabled={busy}>
-      <legend>Dropbox</legend>
+      <legend>{t('dropbox_4750d0')}</legend>
       <p>
-        Trasferisci una copia completa del progetto solo quando lo richiedi.
-        Ogni esportazione crea un nuovo backup; l’importazione crea un nuovo
-        progetto.
+        {t(
+          'trasferisci_una_copia_completa_del_progetto_solo_quando_lo_richie_74b582',
+        )}
       </p>
       {!connected ? (
         <button
@@ -58,7 +59,7 @@ export function DropboxPanel({
             })
           }
         >
-          Collega Dropbox
+          {t('collega_dropbox_ad3d59')}
         </button>
       ) : (
         <>
@@ -68,10 +69,10 @@ export function DropboxPanel({
               disconnectDropbox();
               setConnected(false);
               setFiles(undefined);
-              setMessage('Dropbox scollegato da questa scheda.');
+              setMessage(t('dropbox_scollegato_da_questa_scheda_766836'));
             }}
           >
-            Scollega Dropbox
+            {t('scollega_dropbox_aec7f9')}
           </button>
           {prepareExport && (
             <button
@@ -79,11 +80,15 @@ export function DropboxPanel({
               onClick={() =>
                 void run(async () => {
                   const file = await uploadDropboxBackup(await prepareExport());
-                  setMessage(`Backup esportato su Dropbox: ${file.name}`);
+                  setMessage(
+                    t('backup_esportato_su_dropbox_value0_e28af7', {
+                      value0: file.name,
+                    }),
+                  );
                 })
               }
             >
-              Esporta su Dropbox
+              {t('esporta_su_dropbox_ba3d4f')}
             </button>
           )}
           {onImport && (
@@ -96,11 +101,13 @@ export function DropboxPanel({
                   })
                 }
               >
-                Mostra backup Dropbox
+                {t('mostra_backup_dropbox_1cdc7b')}
               </button>
               {files?.length === 0 && (
                 <p>
-                  Nessun backup Genowrite 3 nella cartella dell’app Dropbox.
+                  {t(
+                    'nessun_backup_genowrite_3_nella_cartella_dell_app_dropbox_1c4a0f',
+                  )}
                 </p>
               )}
               <ul>
@@ -118,8 +125,10 @@ export function DropboxPanel({
                     </button>
                     <small>
                       {' '}
-                      {new Date(file.server_modified).toLocaleString()} ·{' '}
-                      {Math.ceil(file.size / 1024)} KB
+                      {new Date(file.server_modified).toLocaleString(
+                        locale,
+                      )} · {Math.ceil(file.size / 1024)}
+                      {t('kb_550fde')}
                     </small>
                   </li>
                 ))}
@@ -128,7 +137,7 @@ export function DropboxPanel({
           )}
         </>
       )}
-      {busy && <p role="status">Operazione Dropbox in corso…</p>}
+      {busy && <p role="status">{t('operazione_dropbox_in_corso_8dfe81')}</p>}
       {message && <p role="status">{message}</p>}
       {error && <p role="alert">{error}</p>}
     </fieldset>

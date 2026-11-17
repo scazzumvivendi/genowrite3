@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 export interface RuleSettings {
   italian: boolean;
   apostrophe: boolean;
@@ -131,28 +132,28 @@ export function diagnose(text: string, settings: RuleSettings): Diagnostic[] {
   collect(
     /\b\p{Lu}{2,}\p{Ll}*\b/gu,
     'uppercase',
-    'Maiuscole consecutive: verifica nome o acronimo.',
+    t('maiuscole_consecutive_verifica_nome_o_acronimo_7b5d74'),
     (word) => !settings.acronymExceptions.includes(word),
   );
   collect(
     / +[,.!?;:]/gu,
     'punctuation-space',
-    'Spazio prima della punteggiatura.',
+    t('spazio_prima_della_punteggiatura_10421f'),
   );
   collect(
     /^[ \t]+|[ \t]+$/gmu,
     'whitespace',
-    'Spazi all’inizio o alla fine del paragrafo.',
+    t('spazi_all_inizio_o_alla_fine_del_paragrafo_bb3041'),
   );
   collect(
     /[!?]{2,}|\.{4,}| {2,}/gu,
     'repeated',
-    'Punteggiatura o spazi ripetuti.',
+    t('punteggiatura_o_spazi_ripetuti_151ed5'),
   );
   collect(
     /\p{L}$/gmu,
     'ending',
-    'Il paragrafo potrebbe richiedere una punteggiatura finale.',
+    t('il_paragrafo_potrebbe_richiedere_una_punteggiatura_finale_8c1f8c'),
   );
   return results;
 }

@@ -82,5 +82,12 @@ Microsoft Word e IME nativi rimangono verifiche manuali elencate nel gate di ril
 
 `src/modules/dropbox` contiene OAuth PKCE e il trasporto API, senza dipendenze
 aggiuntive. I componenti Dropbox riusano backup, validazione e ripristino atomico
-esistenti. Nessun traffico Dropbox all’avvio ordinario, salvo il completamento
-di un collegamento OAuth richiesto. Vedi [DROPBOX.md](DROPBOX.md).
+esistenti. Il traffico Dropbox è limitato ai comandi espliciti, al completamento
+di un collegamento OAuth richiesto e al backup periodico attivato per progetto. Vedi [DROPBOX.md](DROPBOX.md).
+
+## Catalogo i18n italiano
+
+Testi UI, accessibilità, diagnostica ed errori applicativi passano da
+`src/i18n/index.ts` e `src/i18n/it.ts`, con chiavi e parametri verificati da
+TypeScript. Titolo HTML e metadati PWA usano lo stesso catalogo. Non ci sono
+cataloghi inglesi o servizi di traduzione. Vedi [I18N.md](I18N.md).

@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import { db } from '../../database/db';
 
 export interface Preferences {
@@ -56,7 +57,7 @@ export function validatePreferences(value: Preferences) {
     value.acronymExceptions.some((word) => typeof word !== 'string') ||
     !['manuscript', 'custom'].includes(value.defaultExportProfile)
   ) {
-    throw new Error('Preferenze non valide.');
+    throw new Error(t('preferenze_non_valide_b37ad9'));
   }
 
   if (
@@ -74,7 +75,7 @@ export function validatePreferences(value: Preferences) {
     value.autosaveDelay > 2000 ||
     !['off', 'en', 'em'].includes(value.dash)
   ) {
-    throw new Error('Preferenze fuori dai limiti consentiti.');
+    throw new Error(t('preferenze_fuori_dai_limiti_consentiti_c97b3d'));
   }
 }
 export async function readPreferences(): Promise<Preferences> {

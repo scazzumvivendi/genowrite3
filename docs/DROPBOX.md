@@ -1,7 +1,7 @@
 # Importazione ed esportazione Dropbox
 
 Estensione autorizzata dopo la prima release: Dropbox è opzionale e trasferisce
-backup JSON completi soltanto su comando dell’utente. Non sincronizza progetti,
+backup JSON completi su comando dell’utente o tramite backup periodico esplicitamente attivato. Non sincronizza progetti,
 non unisce versioni e non propaga cancellazioni. Non richiede backend né SDK remoto.
 
 ## Configurazione dell’app Dropbox
@@ -33,7 +33,7 @@ manuali: i test automatici usano API simulate e non trasferiscono manoscritti re
 
 ## Uso
 
-In **Esporta → Formato → Backup completo JSON**, scegliere **Collega Dropbox**.
+Usare il pulsante **Dropbox** nella barra principale oppure il pannello Dropbox sempre visibile in **Esporta**, quindi scegliere **Collega Dropbox**.
 Prima del redirect le modifiche dell’editor vengono salvate; al ritorno riaprire
 il dialogo e scegliere **Esporta su Dropbox**. Il collegamento da solo non invia
 contenuti. Ogni esportazione crea un nome con titolo, data e UUID, senza sostituire
@@ -81,3 +81,15 @@ compresi PKCE, callback, scadenza/revoca, paginazione, Unicode, upload e validaz
 Il test Chromium con API simulate verifica esportazione dell’ultima bozza,
 anteprima, ripristino del testo e conservazione di entrambi i progetti.
 L’autorizzazione reale con la App key fornita richiede la configurazione in console.
+
+## Backup periodico
+
+Il pulsante **Dropbox** nella barra principale apre il comando **Attiva backup
+automatico**, disattivato per impostazione iniziale. La scelta è locale e per
+progetto, separata dal JSON: importare un progetto non attiva invii automatici.
+Ogni minuto con progetto aperto e scheda visibile si salva prima l’editor, poi
+si confronta l’hash del progetto con l’ultimo backup riuscito. Senza modifiche
+non si invia. Ogni invio crea una copia distinta; non vengono cancellati i backup
+precedenti. La scadenza del token o un errore mette in pausa con avviso visibile;
+ricollegare Dropbox e riattivare per riprendere. Chiudere l’app ferma il timer.
+Disattivare impedisce gli invii successivi; un upload già partito può terminare.

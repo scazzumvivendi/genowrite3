@@ -1,3 +1,4 @@
+import { t } from '../../i18n';
 import type { JSONContent } from '@tiptap/core';
 import {
   childrenOf,
@@ -117,7 +118,9 @@ export function manuscriptBlocks(
   const nodes = liveNodes(snapshot);
   if (options.scope.some((id) => !nodes.some((node) => node.id === id))) {
     throw new Error(
-      'Uno degli elementi selezionati non è più disponibile. Rivedi l’ambito di esportazione.',
+      t(
+        'uno_degli_elementi_selezionati_non_e_piu_disponibile_rivedi_l_amb_8901e9',
+      ),
     );
   }
   const documents = new Map(
@@ -146,7 +149,9 @@ export function manuscriptBlocks(
       if (included && node.documentId) {
         const document = documents.get(node.documentId);
         if (!document) {
-          throw new Error(`Documento mancante: ${node.title}.`);
+          throw new Error(
+            t('documento_mancante_value0_a6932e', { value0: node.title }),
+          );
         }
         // Identificatori delle liste indipendenti anche tra documenti diversi.
         const body = serializeBlocks(document.content).map((block) =>
@@ -205,7 +210,7 @@ export function safeFilename(title: string) {
     sanitized
       .trim()
       .slice(0, 120)
-      .replace(/[. ]+$/gu, '') || 'Genowrite';
+      .replace(/[. ]+$/gu, '') || t('genowrite_882e29');
   return /^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/iu.test(name)
     ? `_${name}`
     : name;

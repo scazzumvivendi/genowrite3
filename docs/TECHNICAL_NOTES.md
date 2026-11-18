@@ -137,6 +137,18 @@ necessario. Chromium include la prova dev. deploy-pages attende quality e tutti
 i browser, pubblicando lo stesso dist-pages già testato. Nessuna riduzione della
 copertura; tempi remoti da misurare dopo il push.
 
+Contenimento consumi CI: push solo su main, pull request e avvio manuale;
+runner fissati a Ubuntu 24.04. Installazione browser limitata a 5 minuti,
+job quality/browser/deploy rispettivamente a 15/20/10 minuti. Chromium scarica
+solo la headless shell; nessuna cache aggiuntiva dei binari browser. La seconda
+build, per Pages, esegue solo Vite dopo i controlli strict già completati.
+Artefatti diagnostici solo su errore, retention di un giorno; build condivise
+già limitate a un giorno. Il piano e le quote dell’account non sono verificati.
+`npm ci --prefer-offline` riutilizza la cache npm già configurata senza controlli
+di freschezza superflui. La matrice usa fail-fast: il primo browser fallito
+interrompe i job fratelli, dato che il deploy richiede comunque tutti i gate.
+Le esecuzioni riuscite mantengono tutti i test sui tre browser.
+
 ## Logo approvato
 
 `public/icon.svg` deriva dalla proposta 2 approvata: cappello `#102A43` pieno,

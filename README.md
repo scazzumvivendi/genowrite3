@@ -128,3 +128,9 @@ applicato a interfaccia, favicon e icone PWA/Apple. Sorgente: `public/icon.svg`;
 Le proposte precedenti restano in [anteprima](design/logo-proposals.html).
 La CI distribuisce i browser in tre job paralleli e pubblica solo dopo tutti i
 controlli; il nuovo tempo remoto va misurato alla prossima esecuzione GitHub.
+Per contenere consumi e download, parte sui push a `main` e sulle pull request,
+usa Ubuntu 24.04, installa solo il browser necessario (solo headless shell per
+Chromium) e interrompe l’installazione dopo 5 minuti. I risultati diagnostici
+sono caricati solo in caso di errore e conservati per un giorno.
+L’installazione npm privilegia la cache; al primo browser fallito vengono
+interrotti gli altri job della matrice, evitando lavoro che non può portare al deploy.

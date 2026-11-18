@@ -1,6 +1,7 @@
 name: Quality gates
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 permissions:
@@ -10,7 +11,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   quality:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     permissions:
       contents: read
       pages: write
@@ -20,7 +22,7 @@ jobs:
         with:
           node-version-file: .tool-versions
           cache: npm
-      - run: npm ci --no-audit --no-fund
+      - run: npm ci --prefer-offline --no-audit --no-fund
       - run: npm run build
       - run: npm test
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
@@ -29,7 +31,8 @@ jobs:
       - name: Build Pages once for testing and deployment
         env:
           PAGES_BASE_PATH: ${{ (github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && format('{0}/', steps.pages.outputs.base_path)) || '/genowrite3/' }}
-        run: npm run build -- --base="${PAGES_BASE_PATH%/}/" --outDir=dist-pages
+        # Strict checks already ran in npm run build above.
+        run: npx --no-install vite build --base="${PAGES_BASE_PATH%/}/" --outDir=dist-pages
       - uses: actions/upload-artifact@v4
         with:
           name: application-builds
@@ -43,9 +46,11 @@ jobs:
           path: dist-pages
   browsers:
     needs: quality
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     strategy:
-      fail-fast: false
+      # Once a required browser fails, deployment is blocked anyway.
+      fail-fast: true
       matrix:
         browser: [chromium, firefox, webkit]
     steps:
@@ -54,8 +59,11 @@ jobs:
         with:
           node-version-file: .tool-versions
           cache: npm
-      - run: npm ci --no-audit --no-fund
-      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - run: npm ci --prefer-offline --no-audit --no-fund
+      - name: Install only the required browser
+        timeout-minutes: 5
+        # Chromium tests are headless: skip the full desktop browser download.
+        run: npx --no-install playwright install --with-deps --only-shell ${{ matrix.browser }}
       - uses: actions/download-artifact@v4
         with:
           name: application-builds
@@ -64,14 +72,16 @@ jobs:
         if: matrix.browser == 'chromium'
       - run: npm run test:pages -- --project=${{ matrix.browser }}
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: browser-results-${{ matrix.browser }}
           path: test-results/
+          retention-days: 1
   deploy-pages:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: [quality, browsers]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     permissions:
       pages: write
       id-token: write

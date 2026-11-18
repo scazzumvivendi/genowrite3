@@ -571,7 +571,7 @@
   border: 1px solid var(--outline-variant);
   border-radius: 16px;
   min-width: 0;
-  background: var(--surface);
+  background: var(--surface-low);
 }
 .project-card-heading {
   display: flex;

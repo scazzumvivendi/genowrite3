@@ -2,7 +2,6 @@
 .writing-shell {
   --outline-variant: #d3dce8;
   --page: #fbfcff;
-  --surface-low: #eef3f9;
   --primary-container: #dce7f5;
   height: 100dvh;
   min-height: 0;
@@ -15,7 +14,6 @@
 .writing-shell[data-theme='dark'] {
   --outline-variant: #3d4957;
   --page: #151c25;
-  --surface-low: #192330;
   --primary-container: #29476b;
 }
 .writing-shell h1,

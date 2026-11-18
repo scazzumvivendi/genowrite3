@@ -90,3 +90,9 @@ selezione persistita senza modificare i contenuti; il cestino resta recuperabile
 
 I pulsanti ordinari riprendono lo sfondo della superficie su cui si trovano,
 come nella versione iniziale. Il grigio distinto resta per gli stati selezionati.
+
+## Colori delle card e degli stati — uniformità con Manoscritto
+
+La richiesta successiva sostituisce il grigio distinto con la superficie del menu
+Manoscritto: card di capitoli e progetti, stati selezionati dei pulsanti e altre
+superfici tonali condividono `--surface-low`, nei temi chiaro e scuro.

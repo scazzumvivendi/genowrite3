@@ -58,6 +58,7 @@ Per passare da un’origine all’altra usa backup e ripristino JSON.
   selezionabile e backup JSON completo con ripristino atomico in un nuovo progetto.
 - Temi chiaro/scuro/sistema, preferenze editor locali, inspector opzionale,
   responsive e Zen. Statistiche senza controllo di nascondimento.
+  Card di progetti e capitoli e stati selezionati condividono il colore del menu Manoscritto.
 - PWA con tutti gli asset locali in precache e aggiornamento esplicito dopo
   salvataggio; nessun reload automatico mentre si scrive.
 

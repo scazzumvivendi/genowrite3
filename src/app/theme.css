@@ -15,8 +15,9 @@ body {
   --on-success: #fff;
   --primary: #244876;
   --on-primary: #fff;
-  --secondary-container: #e7e9ec;
-  --on-secondary-container: #30343a;
+  --surface-low: #eef3f9;
+  --secondary-container: var(--surface-low);
+  --on-secondary-container: var(--on-surface);
   --surface: #f8faff;
   --surface-container: #eaf0f7;
   --on-surface: #1d1b20;
@@ -37,8 +38,7 @@ body {
   --on-success: #07391c;
   --primary: #adc9ef;
   --on-primary: #062e53;
-  --secondary-container: #2b3037;
-  --on-secondary-container: #e0e3e7;
+  --surface-low: #192330;
   --surface: #111820;
   --surface-container: #1c2632;
   --on-surface: #e6e0e9;

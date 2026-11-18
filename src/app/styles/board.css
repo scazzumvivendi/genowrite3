@@ -1,0 +1,155 @@
+.chapter-board {
+  overflow: auto;
+  padding: 24px;
+  min-width: 0;
+}
+.chapter-board > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.chapter-board h1 {
+  font-size: 24px;
+}
+.chapter-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  list-style: none;
+  padding: 0;
+  gap: 16px;
+}
+.chapter-cards > li {
+  border: 1px solid var(--outline);
+  background: var(--surface);
+  border-radius: var(--shape-large);
+  padding: 20px;
+  min-width: 0;
+}
+.chapter-cards h2 {
+  font-size: 20px;
+  margin: 8px 0 16px;
+  overflow-wrap: anywhere;
+}
+.chapter-cards p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 240px;
+  overflow: auto;
+}
+.chapter-number {
+  color: var(--primary);
+  font-size: 12px;
+}
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.navigation-panel .library-preview {
+  border-top: 1px solid var(--outline-variant);
+  padding-top: 16px;
+}
+.navigation-panel .library-preview button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 12px;
+  margin-top: 4px;
+  border-radius: var(--shape-medium);
+}
+.backup-screen {
+  max-width: 1200px;
+  margin: auto;
+  padding: 32px clamp(16px, 4vw, 48px);
+}
+.backup-screen > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.backup-screen h1 {
+  font-size: 28px;
+}
+.backup-screen fieldset {
+  min-width: 0;
+  border: 1px solid var(--outline);
+  border-radius: var(--shape-large);
+  padding: 20px;
+  margin: 20px 0;
+}
+.backup-screen button {
+  margin: 4px;
+}
+.backup-projects {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  margin-top: 24px;
+}
+.backup-projects button {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  text-align: left;
+  padding: 20px;
+}
+.backup-table-scroll {
+  overflow-x: auto;
+}
+.backup-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.backup-table caption {
+  text-align: left;
+  padding: 16px 0;
+  font-weight: 600;
+}
+.backup-table th,
+.backup-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--outline-variant);
+}
+.backup-table button {
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+.connection-status {
+  color: var(--primary);
+  font-weight: 600;
+  padding: 8px 0;
+}
+.dropbox-toast {
+  position: fixed;
+  z-index: 10;
+  right: 16px;
+  bottom: 100px;
+  max-width: calc(100% - 32px);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface-container, #eaf0f7);
+  color: var(--on-surface, #1d1b20);
+  border: 1px solid var(--outline, #79747e);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0002;
+}
+.manuscript-list summary {
+  padding: 0;
+}
+.manuscript-list summary .document-link {
+  display: inline-flex;
+  width: calc(100% - 20px);
+  vertical-align: middle;
+}

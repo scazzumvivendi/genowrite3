@@ -24,9 +24,9 @@
   font-weight: 600;
 }
 .panel-heading .icon-button {
-  width: 36px;
-  min-width: 36px;
-  min-height: 36px;
+  width: 44px;
+  min-width: 44px;
+  min-height: 44px;
 }
 .panel-scroll {
   overflow: auto;
@@ -98,8 +98,8 @@
   gap: 8px;
   padding: 8px;
   border-radius: 9px;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 14px;
+  line-height: 20px;
   margin: 3px 0;
 }
 .document-link svg {
@@ -124,7 +124,7 @@
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .inspector-panel .panel-scroll {

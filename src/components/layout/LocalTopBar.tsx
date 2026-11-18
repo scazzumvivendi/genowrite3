@@ -25,6 +25,7 @@ export function LocalTopBar({
   onDropbox,
   dropboxActive,
   syncActive,
+  syncWarning,
 }: {
   projectTitle: string;
   title: string;
@@ -42,6 +43,7 @@ export function LocalTopBar({
   onDropbox: () => void;
   dropboxActive: boolean;
   syncActive: boolean;
+  syncWarning: boolean;
 }) {
   return (
     <header className="top-bar product-top-bar">
@@ -120,17 +122,29 @@ export function LocalTopBar({
           type="button"
           className="icon-button dropbox-button"
           data-active={dropboxActive || syncActive}
+          data-warning={syncWarning}
           onClick={onDropbox}
-          aria-label={t('dropbox_4750d0')}
+          aria-label={
+            syncWarning
+              ? `${t('dropbox_4750d0')}: ${t('sync.unchecked')}`
+              : t('dropbox_4750d0')
+          }
           title={
-            syncActive
-              ? t('sync.enabledHint')
-              : dropboxActive
-                ? t('backup_dropbox_automatico_attivo_2b04ad')
-                : t('backup_dropbox_59f66f')
+            syncWarning
+              ? t('sync.unchecked')
+              : syncActive
+                ? t('sync.enabledHint')
+                : dropboxActive
+                  ? t('backup_dropbox_automatico_attivo_2b04ad')
+                  : t('backup_dropbox_59f66f')
           }
         >
           <Icon name="dropbox" />
+          {(dropboxActive || syncActive || syncWarning) && (
+            <span className="dropbox-status" aria-hidden="true">
+              {syncWarning ? '!' : '✓'}
+            </span>
+          )}
         </button>
         <button
           className="icon-button"

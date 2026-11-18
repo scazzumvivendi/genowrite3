@@ -168,19 +168,33 @@ export function DropboxPanel({
               ) : (
                 files && (
                   <div
-                    className="backup-projects"
+                    className="backup-projects backup-table-scroll"
                     aria-label={t('dropbox.projects')}
                   >
-                    {groups.map((item) => (
-                      <button
-                        type="button"
-                        key={item.id}
-                        onClick={() => setGroupId(item.id)}
-                      >
-                        {item.title}
-                        <span>{item.files.length}</span>
-                      </button>
-                    ))}
+                    <table className="backup-table">
+                      <caption>{t('dropbox.projects')}</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">{t('progetti_d7805e')}</th>
+                          <th scope="col">{t('dropbox.versions')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {groups.map((item) => (
+                          <tr key={item.id}>
+                            <td>
+                              <button
+                                type="button"
+                                onClick={() => setGroupId(item.id)}
+                              >
+                                {item.title}
+                              </button>
+                            </td>
+                            <td>{item.files.length}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )
               )}

@@ -33,6 +33,26 @@ export function ProjectChooser({
       setBusy(false);
     }
   }
+  async function remove(project: Project) {
+    if (
+      !window.confirm(
+        t(
+          'spostare_il_progetto_value0_nel_cestino_potrai_ripristinarlo_dall_02f2f7',
+          { value0: project.title },
+        ),
+      )
+    ) {
+      return;
+    }
+    setBusy(true);
+    try {
+      await projectService.setProjectDeleted(project.id, true);
+    } catch (reason) {
+      setError(String(reason));
+    } finally {
+      setBusy(false);
+    }
+  }
   async function restore(id: string) {
     try {
       await projectService.setProjectDeleted(id, false);
@@ -66,22 +86,18 @@ export function ProjectChooser({
           : 'light'
       }
     >
-      <main>
-        <span className="brand-mark">
-          <img
-            src={`${import.meta.env.BASE_URL}icon.svg`}
-            alt=""
-            width="44"
-            height="44"
-          />
-        </span>
-        <p className="section-label">{t('genowrite_3_4ba304')}</p>
-        <h1>{t('i_tuoi_progetti_03664f')}</h1>
-        <p>
-          {t(
-            'scrivi_e_organizza_i_tuoi_progetti_su_questo_dispositivo_nessun_a_eaff54',
-          )}
-        </p>
+      <main className="backup-screen product-dialog">
+        <header>
+          <span className="brand-mark">
+            <img
+              src={`${import.meta.env.BASE_URL}icon.svg`}
+              alt=""
+              width="44"
+              height="44"
+            />
+          </span>
+          <h1>{t('progetti_d7805e')}</h1>
+        </header>
         <form
           onSubmit={(event) => {
             event.preventDefault();
@@ -107,9 +123,7 @@ export function ProjectChooser({
         </button>
         {error && <p role="alert">{error}</p>}
         <div className="panel-heading">
-          <h2>
-            {trash ? t('cestino_progetti_8d4d8d') : t('i_tuoi_progetti_03664f')}
-          </h2>
+          <h2>{trash ? t('cestino_progetti_8d4d8d') : t('progetti_d7805e')}</h2>
           <button onClick={() => setTrash(!trash)}>
             {trash ? t('mostra_progetti_f0dbe3') : t('cestino_progetti_8d4d8d')}
           </button>
@@ -125,15 +139,27 @@ export function ProjectChooser({
                     {project.author || t('autore_non_indicato_4a032f')}
                   </small>
                 </div>
-                <button
-                  className="tonal"
-                  onClick={() =>
-                    trash ? void restore(project.id) : onOpen(project.id)
-                  }
-                >
-                  {trash ? t('ripristina_cf1718') : t('apri_12abcf')}
-                  <span className="sr-only"> {project.title}</span>
-                </button>
+                <div className="dialog-actions">
+                  <button
+                    disabled={busy}
+                    className="tonal"
+                    onClick={() =>
+                      trash ? void restore(project.id) : onOpen(project.id)
+                    }
+                  >
+                    {trash ? t('ripristina_cf1718') : t('apri_12abcf')}
+                    <span className="sr-only"> {project.title}</span>
+                  </button>
+                  {!trash && (
+                    <button
+                      disabled={busy}
+                      onClick={() => void remove(project)}
+                    >
+                      {t('sposta_nel_cestino_dd41b3')}
+                      <span className="sr-only"> {project.title}</span>
+                    </button>
+                  )}
+                </div>
               </li>
             ))}
         </ul>

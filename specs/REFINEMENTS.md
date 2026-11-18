@@ -62,3 +62,18 @@ Dopo il timeout di 5 minuti, il percorso ordinario mantiene build e test
 unitari/integrativi essenziali ed esclude installazione browser ed E2E.
 La matrice completa resta disponibile manualmente con `full_browser_tests`;
 quando richiesta, deve passare prima del deploy.
+
+## Uniformità interfaccia e gestione progetti — 18 novembre 2026
+
+- Biblioteca e preferenze sono pagine dedicate con intestazione comune a Dropbox;
+  l’apertura salva prima la bozza e la biblioteca conferma l’abbandono delle schede modificate.
+- Home con la stessa tipografia delle pagine, senza sovratitolo promozionale;
+  logo e titolo progetto senza bordo. Pulsanti tonali azzurrini, forme e dimensioni
+  coerenti anche nella navigazione; schede capitolo e stato collegamento azzurrini.
+- Dropbox mostra un check verde quando backup automatico o sync sono attivi;
+  problemi e divergenze hanno un indicatore distinto. Il check indica attivazione,
+  non garantisce l’allineamento remoto: il dettaglio resta nella pagina Dropbox.
+- Backup raggruppati per progetto e versioni in tabelle. Sync e merge già esistenti
+  restano separati dal ripristino come nuova copia.
+- Cancellazione dalla home con conferma e cestino recuperabile, senza eliminazione
+  definitiva dei contenuti o dei backup remoti.

@@ -23,7 +23,7 @@
 }
 .chapter-cards > li {
   border: 1px solid var(--outline);
-  background: var(--surface);
+  background: var(--secondary-container);
   border-radius: var(--shape-large);
   padding: 20px;
   min-width: 0;
@@ -90,9 +90,6 @@
   margin: 4px;
 }
 .backup-projects {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   margin-top: 24px;
 }
 .backup-projects button {
@@ -125,9 +122,11 @@
   text-align: left;
 }
 .connection-status {
-  color: var(--primary);
+  color: var(--on-secondary-container);
+  background: var(--secondary-container);
+  border-radius: var(--shape-medium);
   font-weight: 600;
-  padding: 8px 0;
+  padding: 12px 16px;
 }
 .dropbox-toast {
   position: fixed;
@@ -139,7 +138,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  background: var(--surface-container, #eaf0f7);
+  background: var(--secondary-container, #dce7f5);
   color: var(--on-surface, #1d1b20);
   border: 1px solid var(--outline, #79747e);
   border-radius: 12px;
@@ -152,4 +151,14 @@
   display: inline-flex;
   width: calc(100% - 20px);
   vertical-align: middle;
+}
+
+.project-chooser main > header {
+  justify-content: flex-start;
+}
+.project-chooser .panel-heading {
+  padding: 24px 0 8px;
+}
+.backup-screen > form {
+  max-width: 760px;
 }

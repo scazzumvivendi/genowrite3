@@ -39,8 +39,8 @@
   border-color: transparent;
 }
 .filled-button {
-  background: var(--primary);
-  color: var(--on-primary);
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
   padding: 0 24px;
   float: right;
 }

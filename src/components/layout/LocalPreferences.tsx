@@ -4,7 +4,7 @@ import {
   type Preferences,
   savePreferences,
 } from '../../modules/settings/preferences';
-import { Modal } from '../common/Modal';
+import { Screen } from '../common/Screen';
 import { useInstall } from '../../app/pwa/install';
 
 export function LocalPreferences({
@@ -30,7 +30,7 @@ export function LocalPreferences({
     }
   }
   return (
-    <Modal
+    <Screen
       title={t('preferenze_di_scrittura_f84136')}
       onClose={onClose}
       protectContent={false}
@@ -215,6 +215,6 @@ export function LocalPreferences({
           {busy ? t('salvataggio_c4f57f') : t('salva_preferenze_0c25ea')}
         </button>
       </form>
-    </Modal>
+    </Screen>
   );
 }

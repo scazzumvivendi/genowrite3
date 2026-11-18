@@ -9,7 +9,7 @@ test('biblioteca locale, collegamenti, ricerca e duplicazione indipendente', asy
     .getByRole('textbox', { name: 'Testo · Capitolo' })
     .fill('Il mare e la città.');
   await page.getByRole('button', { name: 'Personaggi', exact: true }).click();
-  const library = page.getByRole('dialog', { name: 'Personaggi', exact: true });
+  const library = page.getByRole('main', { name: 'Personaggi', exact: true });
   await library.getByLabel('Nome o titolo').fill('Elena');
   await library
     .getByLabel('Descrizione', { exact: true })
@@ -34,9 +34,7 @@ test('biblioteca locale, collegamenti, ricerca e duplicazione indipendente', asy
   await search.getByLabel('Cerca testo, titoli e riferimenti').fill('Elena');
   await search.getByRole('button', { name: /Elena/ }).click();
   await expect(
-    page
-      .getByRole('dialog', { name: 'Personaggi' })
-      .getByLabel('Nome o titolo'),
+    page.getByRole('main', { name: 'Personaggi' }).getByLabel('Nome o titolo'),
   ).toHaveValue('Elena');
   await page.getByRole('button', { name: 'Chiudi finestra' }).click();
   await page

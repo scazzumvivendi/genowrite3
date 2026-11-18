@@ -192,15 +192,33 @@ export function ProjectSession({
       );
     });
   }
-  if (dialog === 'dropbox') {
+  if (
+    dialog === 'dropbox' ||
+    dialog === 'library' ||
+    dialog === 'preferences'
+  ) {
     return (
       <div className="theme" data-theme={dark ? 'dark' : 'light'}>
-        <DropboxDialog
-          projectId={snapshot.project.id}
-          flush={() => saver.flush()}
-          onClose={() => setDialog(undefined)}
-          onRestored={() => onProjects()}
-        />
+        {dialog === 'dropbox' ? (
+          <DropboxDialog
+            projectId={snapshot.project.id}
+            flush={() => saver.flush()}
+            onClose={() => setDialog(undefined)}
+            onRestored={() => onProjects()}
+          />
+        ) : dialog === 'library' ? (
+          <LibraryDialog
+            snapshot={snapshot}
+            kind={libraryKind}
+            {...(libraryId ? { initialId: libraryId } : {})}
+            onClose={() => setDialog(undefined)}
+          />
+        ) : (
+          <LocalPreferences
+            preferences={preferences}
+            onClose={() => setDialog(undefined)}
+          />
+        )}
       </div>
     );
   }
@@ -234,11 +252,20 @@ export function ProjectSession({
         onZen={() => setZen(!zen)}
         onProjects={() => void run(onProjects)}
         onProperties={() => void run(() => setDialog('project'))}
-        onPreferences={() => setDialog('preferences')}
+        onPreferences={() => void run(() => setDialog('preferences'))}
         onExport={() => setDialog('export')}
         onDropbox={() => void run(() => setDialog('dropbox'))}
         dropboxActive={automatic.value?.enabled ?? false}
         syncActive={sync.value?.enabled ?? false}
+        syncWarning={Boolean(
+          automatic.value?.error ||
+          automatic.error ||
+          sync.value?.error ||
+          sync.error ||
+          ['conflict', 'diverged', 'local', 'remote'].includes(
+            sync.value?.status ?? '',
+          ),
+        )}
       />
       <div
         className="workspace-grid"
@@ -263,7 +290,7 @@ export function ProjectSession({
             onLibrary={(kind) => {
               setLibraryKind(kind);
               setLibraryId(undefined);
-              setDialog('library');
+              void run(() => setDialog('library'));
             }}
             onSearch={() => void run(() => setDialog('search'))}
           />
@@ -367,7 +394,7 @@ export function ProjectSession({
                     onClick={() => {
                       setLibraryKind(record.kind);
                       setLibraryId(record.id);
-                      setDialog('library');
+                      void run(() => setDialog('library'));
                     }}
                   >
                     {record.name}
@@ -386,7 +413,7 @@ export function ProjectSession({
                     onClick={() => {
                       setLibraryKind('note');
                       setLibraryId(note.id);
-                      setDialog('library');
+                      void run(() => setDialog('library'));
                     }}
                   >
                     {note.title}
@@ -489,14 +516,6 @@ export function ProjectSession({
           onClose={() => setDialog(undefined)}
         />
       )}
-      {dialog === 'library' && (
-        <LibraryDialog
-          snapshot={snapshot}
-          kind={libraryKind}
-          {...(libraryId ? { initialId: libraryId } : {})}
-          onClose={() => setDialog(undefined)}
-        />
-      )}
       {dialog === 'search' && (
         <SearchDialog
           snapshot={snapshot}
@@ -514,15 +533,9 @@ export function ProjectSession({
                     )!.kind,
               );
               setLibraryId(result.id);
-              setDialog('library');
+              void run(() => setDialog('library'));
             }
           }}
-        />
-      )}
-      {dialog === 'preferences' && (
-        <LocalPreferences
-          preferences={preferences}
-          onClose={() => setDialog(undefined)}
         />
       )}
     </div>

@@ -67,3 +67,14 @@ usano il logo approvato. Nessuna nuova dipendenza.
 Build normale e Pages, lint, formattazione e 62 test unitari superati. Cinque
 scenari Chromium superati per accessibilità chiaro/scuro, icone/manifest,
 riavvio offline e aggiornamento con bozza conservata. PNG controllati visivamente.
+
+## Uniformità UI e cancellazione dalla home — 18 novembre 2026
+
+Verificati build TypeScript, lint e formato; 62 test unitari/integrativi superati.
+Su Chromium: 13 test superati nelle suite ui-consistency, refinements, phase5,
+dropbox, dropbox-sync e accessibility. Coperti pagine Biblioteca/Preferenze,
+conferma di abbandono scheda, cancellazione annullata/confermata e recupero del
+testo dal cestino, backup e merge con conflitti, accessibilità nei temi chiaro e
+scuro e workspace compatto. Ispezionata anche la schermata Biblioteca renderizzata.
+Le API Dropbox sono simulate: il collegamento a un account reale resta manuale.
+Nessuna nuova dipendenza o servizio runtime aggiunto.

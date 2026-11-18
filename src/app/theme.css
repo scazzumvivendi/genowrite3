@@ -10,6 +10,9 @@ body {
   box-sizing: border-box;
 }
 .theme {
+  --outline-variant: #d3dce8;
+  --success: #176838;
+  --on-success: #fff;
   --primary: #244876;
   --on-primary: #fff;
   --secondary-container: #dce7f5;
@@ -29,6 +32,9 @@ body {
   color-scheme: light;
 }
 .theme[data-theme='dark'] {
+  --outline-variant: #3d4957;
+  --success: #8cdda7;
+  --on-success: #07391c;
   --primary: #adc9ef;
   --on-primary: #062e53;
   --secondary-container: #344960;
@@ -46,8 +52,8 @@ button {
   padding: 8px 16px;
   border-radius: var(--shape-medium);
   min-height: 44px;
-  background: transparent;
-  color: inherit;
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
   font:
     500 14px/20px system-ui,
     sans-serif;

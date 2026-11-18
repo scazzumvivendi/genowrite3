@@ -133,3 +133,9 @@ La CI parte sui push a `main`, sulle pull request e su avvio manuale.
 La suite browser completa è opzionale per evitare che il download dei browser
 blocchi la pubblicazione ordinaria. I risultati diagnostici sono caricati solo
 in caso di errore e conservati per un giorno.
+
+Biblioteca, preferenze e Dropbox si aprono in pagine dedicate. Nella raccolta
+progetti puoi spostare un progetto nel cestino dopo conferma e ripristinarlo
+con tutti i contenuti. Il check verde sull’icona Dropbox indica backup automatico
+o sincronizzazione attivi; un punto esclamativo segnala problemi o divergenze.
+Per verificare l’allineamento e gestire eventuali conflitti apri Dropbox.

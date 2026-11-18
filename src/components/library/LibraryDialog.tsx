@@ -7,7 +7,7 @@ import type {
   Note,
 } from '../../modules/manuscript/model';
 import { libraryService } from '../../modules/library/service';
-import { Modal } from '../common/Modal';
+import { Screen } from '../common/Screen';
 
 export type LibraryKind = ReferenceRecord['kind'] | 'note';
 const labels: Record<LibraryKind, string> = {
@@ -120,7 +120,7 @@ export function LibraryDialog({
     }
   }
   return (
-    <Modal title={labels[kind]} onClose={onClose}>
+    <Screen title={labels[kind]} onClose={onClose}>
       {error && <p role="alert">{error}</p>}
       <p className="muted">
         {t(
@@ -271,6 +271,6 @@ export function LibraryDialog({
           )}
         </form>
       )}
-    </Modal>
+    </Screen>
   );
 }

@@ -26,23 +26,109 @@ export async function pkceChallenge(verifier: string) {
     ),
   );
 }
+interface Credentials {
+  accessToken: string;
+  expiresAt: number;
+  refreshToken?: string;
+}
+function persistentStorage() {
+  try {
+    return typeof localStorage === 'undefined' ? undefined : localStorage;
+  } catch {
+    return undefined;
+  }
+}
+function credentials(): Credentials | undefined {
+  try {
+    const value = JSON.parse(
+      persistentStorage()?.getItem(tokenKey) ||
+        sessionStorage.getItem(tokenKey) ||
+        'null',
+    );
+    if (
+      typeof value?.accessToken === 'string' &&
+      Number.isFinite(value.expiresAt)
+    ) {
+      return value;
+    }
+  } catch {
+    /* Corrupted credentials require reconnecting. */
+  }
+}
+function remember(value: Credentials) {
+  if (value.refreshToken && persistentStorage()) {
+    persistentStorage()!.setItem(tokenKey, JSON.stringify(value));
+    sessionStorage.removeItem(tokenKey);
+  } else {
+    sessionStorage.setItem(tokenKey, JSON.stringify(value));
+  }
+}
 export function disconnectDropbox() {
   sessionStorage.removeItem(tokenKey);
   sessionStorage.removeItem(pendingKey);
+  persistentStorage()?.removeItem(tokenKey);
 }
 export function dropboxToken(): string | undefined {
-  try {
-    const token = JSON.parse(sessionStorage.getItem(tokenKey) || 'null');
-    if (
-      typeof token?.accessToken === 'string' &&
-      token.expiresAt > Date.now() + 30_000
-    ) {
-      return token.accessToken;
-    }
-  } catch {
-    // Dati di sessione danneggiati: richiedere un nuovo collegamento.
+  const token = credentials();
+  return token && token.expiresAt > Date.now() + 30_000
+    ? token.accessToken
+    : undefined;
+}
+export function dropboxConnected() {
+  return Boolean(dropboxToken() || credentials()?.refreshToken);
+}
+let refreshing: Promise<string> | undefined;
+export async function validDropboxToken(): Promise<string> {
+  const valid = dropboxToken();
+  if (valid) {
+    return valid;
   }
-  sessionStorage.removeItem(tokenKey);
+  refreshing ??= refresh().finally(() => {
+    refreshing = undefined;
+  });
+  return refreshing;
+}
+async function refresh() {
+  const previous = credentials();
+  if (!previous?.refreshToken) {
+    throw new Error(
+      t('collega_nuovamente_dropbox_la_sessione_e_scaduta_e4f6f8'),
+    );
+  }
+  const response = await fetch('https://api.dropboxapi.com/oauth2/token', {
+    method: 'POST',
+    signal: AbortSignal.timeout(30_000),
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: previous.refreshToken,
+      client_id: clientId,
+    }),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    if (error.error === 'invalid_grant') {
+      disconnectDropbox();
+    }
+    throw new Error(t('dropbox.refreshFailed'));
+  }
+  const token = await response.json();
+  if (
+    typeof token.access_token !== 'string' ||
+    !Number.isFinite(token.expires_in) ||
+    token.expires_in <= 0
+  ) {
+    throw new Error(t('risposta_dropbox_non_valida_8af7d6'));
+  }
+  // Disconnecting while the request is in flight must not reconnect the app.
+  if (credentials()?.refreshToken !== previous.refreshToken) {
+    throw new Error(t('dropbox.refreshFailed'));
+  }
+  remember({
+    accessToken: token.access_token,
+    expiresAt: Date.now() + token.expires_in * 1000,
+    refreshToken: previous.refreshToken,
+  });
+  return token.access_token as string;
 }
 export async function connectDropbox() {
   const verifier = randomCode();
@@ -60,7 +146,7 @@ export async function connectDropbox() {
     state,
     code_challenge: challenge,
     code_challenge_method: 'S256',
-    token_access_type: 'online',
+    token_access_type: 'offline',
     scope: 'files.metadata.read files.content.read files.content.write',
   });
   window.location.assign(`https://www.dropbox.com/oauth2/authorize?${query}`);
@@ -130,12 +216,12 @@ async function complete() {
   ) {
     throw new Error(t('risposta_dropbox_non_valida_8af7d6'));
   }
-  sessionStorage.setItem(
-    tokenKey,
-    JSON.stringify({
-      accessToken: token.access_token,
-      expiresAt: Date.now() + token.expires_in * 1000,
-    }),
-  );
+  remember({
+    accessToken: token.access_token,
+    expiresAt: Date.now() + token.expires_in * 1000,
+    ...(typeof token.refresh_token === 'string'
+      ? { refreshToken: token.refresh_token }
+      : {}),
+  });
   return true;
 }

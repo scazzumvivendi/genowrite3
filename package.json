@@ -20,7 +20,8 @@
     "test:browsers": "playwright test --config playwright.all.config.ts",
     "test:dev": "playwright test --config playwright.dev.config.ts",
     "build:pages": "npm run build -- --base=/genowrite3/ --outDir=dist-pages",
-    "test:pages": "playwright test --config playwright.pages.config.ts"
+    "test:pages": "playwright test --config playwright.pages.config.ts",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@tiptap/core": "3.34.0",

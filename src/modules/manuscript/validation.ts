@@ -2,16 +2,21 @@ import { t } from '../../i18n';
 import type { JSONContent } from '@tiptap/core';
 import type { ManuscriptNode, NodeType, ProjectSnapshot } from './model';
 
-export const parentChildMatrix: Record<
-  NodeType | 'project',
-  readonly NodeType[]
-> = {
+const legacyMatrix: Record<NodeType | 'project', readonly NodeType[]> = {
   project: ['volume', 'part', 'chapter', 'folder'],
   volume: ['part', 'chapter', 'folder'],
   part: ['chapter', 'folder'],
   chapter: ['scene'],
   scene: [],
   folder: ['chapter', 'folder'],
+};
+export const parentChildMatrix: typeof legacyMatrix = {
+  project: ['chapter'],
+  chapter: ['scene'],
+  scene: [],
+  volume: [],
+  part: [],
+  folder: [],
 };
 export function requireTitle(title: string) {
   if (!title.trim() || title.length > 500) {
@@ -23,6 +28,7 @@ export function assertParent(
   type: NodeType,
   parentId: string | null,
   movingId?: string,
+  legacy = false,
 ) {
   const parent = parentId
     ? nodes.find((node) => node.id === parentId && !node.deletedAt)
@@ -30,7 +36,11 @@ export function assertParent(
   if (parentId && !parent) {
     throw new Error(t('contenitore_non_disponibile_a039cc'));
   }
-  if (!parentChildMatrix[parent?.type ?? 'project'].includes(type)) {
+  if (
+    !(legacy ? legacyMatrix : parentChildMatrix)[
+      parent?.type ?? 'project'
+    ].includes(type)
+  ) {
     throw new Error(
       t('questa_posizione_non_ammette_il_tipo_di_elemento_selezionato_aed5e4'),
     );
@@ -171,7 +181,7 @@ export function validateContent(value: unknown): asserts value is JSONContent {
   visit(value, null, 0);
 }
 
-export function validateSnapshot(snapshot: ProjectSnapshot) {
+export function validateSnapshot(snapshot: ProjectSnapshot, legacy = false) {
   const { project, nodes, documents } = snapshot;
   requireTitle(project.title);
   const ids = new Set<string>();
@@ -193,13 +203,6 @@ export function validateSnapshot(snapshot: ProjectSnapshot) {
   }
   for (const node of nodes) {
     requireTitle(node.title);
-    if (
-      !['planned', 'in_progress', 'first_draft', 'revised', 'final'].includes(
-        node.status,
-      )
-    ) {
-      throw new Error(t('stato_di_scrittura_non_valido_9ad6bc'));
-    }
     if (!Number.isFinite(node.order)) {
       throw new Error(t('ordine_non_valido_434675'));
     }
@@ -225,7 +228,7 @@ export function validateSnapshot(snapshot: ProjectSnapshot) {
         nodes.find((parent) => parent.id === parentId)?.parentId ?? null;
     }
     if (!node.deletedAt) {
-      assertParent(nodes, node.type, node.parentId, node.id);
+      assertParent(nodes, node.type, node.parentId, node.id, legacy);
     }
     if (node.type === 'chapter') {
       if (!['direct', 'scenes'].includes(node.mode ?? '')) {

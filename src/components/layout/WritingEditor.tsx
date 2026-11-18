@@ -1,4 +1,6 @@
 import { t } from '../../i18n';
+import { useEffect } from 'react';
+import { registerEditorLock } from '../../modules/editor/active-editor';
 import { EditorContent, useEditor, useEditorState } from '@tiptap/react';
 import type { JSONContent } from '@tiptap/core';
 import { editorExtensions } from '../../modules/editor/extensions';
@@ -10,14 +12,12 @@ export function WritingEditor({
   document,
   content,
   onChange,
-  statusLabel = t('prima_stesura_562f06'),
   rules = () => defaultRules,
   diagnosticSettings = defaultRules,
 }: {
   document: { title: string; kind: string; path: string };
   content: JSONContent;
   onChange: (content: JSONContent) => void;
-  statusLabel?: string;
   rules?: () => RuleSettings;
   diagnosticSettings?: RuleSettings;
 }) {
@@ -29,12 +29,25 @@ export function WritingEditor({
         role: 'textbox',
         'aria-label': t('testo_value0_af791a', { value0: document.title }),
         'aria-multiline': 'true',
-        'aria-describedby': 'editing-notice',
         spellcheck: 'false',
       },
     },
     onUpdate: ({ editor: current }) => onChange(current.getJSON()),
   });
+  useEffect(() => {
+    if (!editor) {
+      return;
+    }
+    return registerEditorLock(() => {
+      const editable = editor.isEditable;
+      editor.setEditable(false, false);
+      return () => {
+        if (!editor.isDestroyed) {
+          editor.setEditable(editable, false);
+        }
+      };
+    });
+  }, [editor]);
   const state = useEditorState({
     editor,
     selector: ({ editor: current }) => ({
@@ -76,30 +89,28 @@ export function WritingEditor({
         </button>
         <button
           className="icon-button"
+          aria-label={t('sottolineato_be834f')}
+          aria-pressed={state?.underline ?? false}
+          onClick={() => editor?.chain().focus().toggleUnderline().run()}
+        >
+          <u aria-hidden="true">{t('u_a25513')}</u>
+        </button>
+        <button
+          className="icon-button"
           aria-label={t('elenco_puntato_ee2081')}
           aria-pressed={state?.list ?? false}
           onClick={() => editor?.chain().focus().toggleBulletList().run()}
         >
           <Icon name="list" />
         </button>
-        <>
-          <button
-            className="icon-button"
-            aria-label={t('sottolineato_be834f')}
-            aria-pressed={state?.underline ?? false}
-            onClick={() => editor?.chain().focus().toggleUnderline().run()}
-          >
-            <u aria-hidden="true">{t('u_a25513')}</u>
-          </button>
-          <button
-            className="icon-button"
-            aria-label={t('elenco_numerato_6f95a7')}
-            aria-pressed={state?.ordered ?? false}
-            onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-          >
-            <Icon name="numbered" />
-          </button>
-        </>
+        <button
+          className="icon-button"
+          aria-label={t('elenco_numerato_6f95a7')}
+          aria-pressed={state?.ordered ?? false}
+          onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+        >
+          <Icon name="numbered" />
+        </button>
         <span className="action-separator" />
         <button
           className="icon-button"
@@ -138,25 +149,15 @@ export function WritingEditor({
           <option value={2}>{t('titolo_2_210acf')}</option>
           <option value={3}>{t('titolo_3_9f4bf0')}</option>
         </select>
-        <span className="toolbar-caption">
-          {t('uno_spazio_per_le_tue_parole_08b26e')}
-        </span>
+        {editor && (
+          <EditorTools editor={editor} settings={diagnosticSettings} />
+        )}
       </div>
-      {editor && <EditorTools editor={editor} settings={diagnosticSettings} />}
       <div className="editor-scroll">
         <article className="manuscript-page">
           <p className="document-breadcrumb">{document.path}</p>
           <h1>{document.title}</h1>
-          <p className="document-kind">
-            {document.kind} · {statusLabel} <span aria-hidden="true">—</span>{' '}
-            {t('manoscritto_edb027')}
-          </p>
           <EditorContent editor={editor} />
-          <p className="editing-notice" id="editing-notice">
-            {t(
-              'salvataggio_automatico_sul_dispositivo_crea_regolarmente_un_backu_1cba00',
-            )}
-          </p>
         </article>
       </div>
     </main>

@@ -50,6 +50,7 @@ export function LibraryDialog({
       .filter(
         (relation) =>
           relation.sourceId === reference?.id &&
+          relation.targetType === 'node' &&
           relation.relationType === 'appears_in',
       )
       .map((relation) => relation.targetId);

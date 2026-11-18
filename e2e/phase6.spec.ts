@@ -37,7 +37,7 @@ test('download DOCX/TXT e backup completo, ripristino come nuovo progetto', asyn
   await page
     .getByRole('button', { name: 'Ripristina backup', exact: true })
     .click();
-  const restore = page.getByRole('dialog', { name: 'Ripristina backup JSON' });
+  const restore = page.getByRole('main', { name: 'Ripristina backup JSON' });
   await restore.getByLabel('File di backup').setInputFiles({
     name: 'backup.json',
     mimeType: 'application/json',

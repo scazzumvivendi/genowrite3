@@ -27,7 +27,6 @@ export function performanceFixture(
       documentId,
       title: `Capitolo ${index + 1}`,
       synopsis: '',
-      status: 'first_draft',
       order: index,
       createdAt: now,
       updatedAt: now,

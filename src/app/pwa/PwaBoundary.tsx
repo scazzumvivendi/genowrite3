@@ -1,6 +1,7 @@
 import { t } from '../../i18n';
 import { useEffect, useState, type ReactNode } from 'react';
 import { flushActive } from './flush-active';
+import { InstallContext } from './install';
 
 interface InstallPrompt extends Event {
   prompt(): Promise<void>;
@@ -20,7 +21,7 @@ export function PwaBoundary({ children }: { children: ReactNode }) {
         scope: import.meta.env.BASE_URL,
       })
       .then((registration) => {
-        if (disposed) {
+        if (disposed || !registration) {
           return;
         }
         if (registration.waiting) {
@@ -72,15 +73,31 @@ export function PwaBoundary({ children }: { children: ReactNode }) {
     }
   }
   return (
-    <>
+    <InstallContext.Provider
+      value={
+        install
+          ? async () => {
+              await install.prompt();
+              setInstall(undefined);
+            }
+          : undefined
+      }
+    >
       {children}
-      {(waiting || install || error) && (
+      {(waiting || error) && (
         <div
           className="pwa-notice"
           aria-label={t('installazione_e_aggiornamenti_140b2b')}
           role="region"
         >
-          {error && <p role="alert">{error}</p>}
+          {error && (
+            <>
+              <p role="alert">{error}</p>
+              <button onClick={() => setError('')}>
+                {t('chiudi_avviso_892129')}
+              </button>
+            </>
+          )}
           {waiting && (
             <>
               <span>{t('e_disponibile_una_nuova_versione_168d1c')}</span>
@@ -89,17 +106,8 @@ export function PwaBoundary({ children }: { children: ReactNode }) {
               </button>
             </>
           )}
-          {install && (
-            <button
-              onClick={() =>
-                void install.prompt().then(() => setInstall(undefined))
-              }
-            >
-              {t('installa_genowrite_e2e0d3')}
-            </button>
-          )}
         </div>
       )}
-    </>
+    </InstallContext.Provider>
   );
 }

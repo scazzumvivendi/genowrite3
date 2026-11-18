@@ -1,9 +1,10 @@
 import { t, locale } from '../../i18n';
+import { groupBackups } from '../../modules/dropbox/groups';
 import { useState } from 'react';
 import {
   connectDropbox,
   disconnectDropbox,
-  dropboxToken,
+  dropboxConnected,
 } from '../../modules/dropbox/auth';
 import {
   downloadDropboxBackup,
@@ -18,13 +19,16 @@ export function DropboxPanel({
   onImport,
 }: {
   prepareExport?: () => Promise<string>;
-  onImport?: (backup: ProjectBackup) => void;
+  onImport?: (backup: ProjectBackup, file?: DropboxFile) => void;
 }) {
-  const [connected, setConnected] = useState(() => Boolean(dropboxToken()));
+  const [connected, setConnected] = useState(() => Boolean(dropboxConnected()));
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [files, setFiles] = useState<DropboxFile[]>();
+  const [groupId, setGroupId] = useState<string>();
+  const groups = groupBackups(files ?? []);
+  const group = groups.find((item) => item.id === groupId);
   async function run(action: () => Promise<void>) {
     setBusy(true);
     setError('');
@@ -35,7 +39,7 @@ export function DropboxPanel({
       setError(reason instanceof Error ? reason.message : String(reason));
     } finally {
       setBusy(false);
-      setConnected(Boolean(dropboxToken()));
+      setConnected(Boolean(dropboxConnected()));
     }
   }
   return (
@@ -63,6 +67,9 @@ export function DropboxPanel({
         </button>
       ) : (
         <>
+          <p className="connection-status" role="status">
+            {t('dropbox.connected')}
+          </p>
           <button
             type="button"
             onClick={() => {
@@ -110,29 +117,73 @@ export function DropboxPanel({
                   )}
                 </p>
               )}
-              <ul>
-                {files?.map((file) => (
-                  <li key={file.id}>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        void run(async () => {
-                          onImport(await downloadDropboxBackup(file));
-                        })
-                      }
-                    >
-                      {file.name}
-                    </button>
-                    <small>
-                      {' '}
-                      {new Date(file.server_modified).toLocaleString(
-                        locale,
-                      )} · {Math.ceil(file.size / 1024)}
-                      {t('kb_550fde')}
-                    </small>
-                  </li>
-                ))}
-              </ul>
+              {group ? (
+                <>
+                  <button type="button" onClick={() => setGroupId(undefined)}>
+                    {t('dropbox.back')}
+                  </button>
+                  <h3>{group.title}</h3>
+                  <div className="backup-table-scroll">
+                    <table className="backup-table">
+                      <caption>{t('dropbox.versions')}</caption>
+                      <thead>
+                        <tr>
+                          <th scope="col">{t('dropbox.date')}</th>
+                          <th scope="col">{t('dropbox.size')}</th>
+                          <th scope="col">{t('dropbox.file')}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {group.files.map((file) => (
+                          <tr key={file.id}>
+                            <td>
+                              {new Date(file.server_modified).toLocaleString(
+                                locale,
+                              )}
+                            </td>
+                            <td>
+                              {Math.ceil(file.size / 1024)} {t('kb_550fde')}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  void run(async () =>
+                                    onImport(
+                                      await downloadDropboxBackup(file),
+                                      file,
+                                    ),
+                                  )
+                                }
+                              >
+                                {file.name}
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              ) : (
+                files && (
+                  <div
+                    className="backup-projects"
+                    aria-label={t('dropbox.projects')}
+                  >
+                    {groups.map((item) => (
+                      <button
+                        type="button"
+                        key={item.id}
+                        onClick={() => setGroupId(item.id)}
+                      >
+                        {item.title}
+                        <span>{item.files.length}</span>
+                      </button>
+                    ))}
+                  </div>
+                )
+              )}
             </>
           )}
         </>

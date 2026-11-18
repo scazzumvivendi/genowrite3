@@ -8,11 +8,12 @@ URL previsto: `https://scazzumvivendi.github.io/genowrite3/`.
 In **Settings → Pages**, selezionare **GitHub Actions** come source. Committare e
 inviare le modifiche a `main`: il workflow parte automaticamente. Dopo il primo
 push è disponibile anche l’avvio manuale di **Quality gates** su quel branch. Il job `quality` verifica build strict, lint, formatter, licenze, test
-unitari/integrativi, browser e sviluppo. Su `main`, ricava il base path effettivo
+unitari/integrativi; i job browsers eseguono in parallelo Chromium, Firefox e WebKit,
+ciascuno con la sua installazione. Chromium include lo sviluppo. Su `main`, ricava il base path effettivo
 con `configure-pages`; sugli altri branch e nelle pull request usa `/genowrite3/`.
 Genera `dist-pages` una sola volta, esegue i test Pages sullo stesso percorso e,
 solo su `main` e dopo il successo dei test, carica quella build come artefatto.
-`deploy-pages` dipende da `quality` e lo pubblica senza ricompilarlo nell’ambiente
+`deploy-pages` dipende da `quality` e da tutti i job `browsers` e lo pubblica senza ricompilarlo nell’ambiente
 `github-pages`, con URL nel riepilogo del workflow. Eventuali regole di approvazione
 dell’ambiente restano quelle configurate dal proprietario del repository.
 

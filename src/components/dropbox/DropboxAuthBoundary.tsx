@@ -10,11 +10,7 @@ export function DropboxAuthBoundary({ children }: { children: ReactNode }) {
     void finishDropboxAuth()
       .then((connected) => {
         if (mounted && connected) {
-          setMessage(
-            t(
-              'dropbox_collegato_apri_esporta_oppure_ripristina_backup_per_trasf_1198f9',
-            ),
-          );
+          setMessage(t('dropbox.connected'));
         }
       })
       .catch((reason: unknown) => {
@@ -37,7 +33,7 @@ export function DropboxAuthBoundary({ children }: { children: ReactNode }) {
   return (
     <>
       {message && (
-        <div role="status">
+        <div className="dropbox-toast" role="status">
           <p>{message}</p>
           <button onClick={() => setMessage('')}>
             {t('chiudi_messaggio_dropbox_59d283')}

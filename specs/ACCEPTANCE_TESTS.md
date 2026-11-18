@@ -3,7 +3,8 @@
 ## 1. Project and hierarchy
 
 - [ ] Create, rename and delete a project.
-- [ ] Create volume, part, chapter and folder nodes in valid locations.
+- [ ] Create chapters at root and scenes in scene-mode chapters only.
+- [ ] Migrate previous containers to notes without content or relationship loss.
 - [ ] Create scenes only under chapters.
 - [ ] Reject invalid parent-child combinations.
 - [ ] Reorder siblings and preserve stable IDs.
@@ -50,7 +51,7 @@
 - [ ] Chapter in scene mode equals sum of child scenes.
 - [ ] Project total counts all manuscript docs once.
 - [ ] Notes, synopsis, characters, locations and objects are excluded.
-- [ ] Reading time uses documented words-per-minute setting.
+- [ ] No reading-time estimate or reading-speed setting is displayed.
 - [ ] Counts update while typing without blocking input.
 - [ ] Statistics remain visible in the main workspace at all times.
 
@@ -104,11 +105,15 @@ Genowrite 3.0 is releasable only when:
 
 ## Estensione autorizzata: Dropbox (novembre 2026)
 
-Il vincolo originale che esclude API remote e trasmissione di contenuti ammette
-ora importazione ed esportazione **opzionali ed esplicite** di backup JSON su
-Dropbox. Backup periodico in uscita opzionale, attivato per progetto, ogni minuto solo
-con modifiche e scheda visibile. Nessun merge, account Genowrite o backend.
-L’archivio locale e l’uso offline rimangono indipendenti da Dropbox. Ogni upload
-crea una copia distinta; il download passa dalla validazione e dall’anteprima,
-poi dalla conferma di ripristino come nuovo progetto. Token brevi nella sessione
-della scheda, OAuth PKCE senza secret. Dettagli in `docs/DROPBOX.md`.
+Dropbox è un’estensione opzionale autorizzata: backup manuali e periodici,
+sincronizzazione per progetto e tentativo di merge automatico con base comune.
+OAuth PKCE con refresh token persistente, senza secret o backend. Le copie di
+backup sono distinte dal file corrente sincronizzato. I conflitti sospendono la
+sync e conservano le versioni; le scelte di sostituzione richiedono conferma e
+salvano copie di recupero. Locale e offline restano indipendenti. La sync funziona
+con app aperta e scheda visibile. Dettagli in `docs/DROPBOX.md` e
+[REFINEMENTS.md](REFINEMENTS.md).
+
+## Revisione successiva autorizzata
+
+I requisiti modificati e i nuovi criteri sono in [REFINEMENTS.md](REFINEMENTS.md).

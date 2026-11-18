@@ -1,5 +1,62 @@
 // Catalogo italiano. Non riutilizzare gli identificatori per messaggi diversi.
 export const it = {
+  'sync.source': 'Origine',
+  'sync.thisDevice': 'Questo dispositivo',
+  'sync.enabledHint': 'Sincronizzazione Dropbox attiva',
+  'sync.unchecked':
+    'Ultimo controllo non riuscito: stato delle copie da verificare',
+  'sync.changedAgain':
+    'Il progetto è cambiato durante il confronto. Ricontrolla le copie prima di scegliere.',
+  'sync.useLocal': 'Usa la copia di questo dispositivo',
+  'sync.useRemote': 'Usa la copia Dropbox',
+  'sync.confirmLocal':
+    'Usare la copia locale anche su Dropbox? Entrambe le versioni attuali saranno conservate nelle copie di recupero.',
+  'sync.confirmRemote':
+    'Usare la copia Dropbox anche su questo dispositivo? Entrambe le versioni attuali saranno conservate nelle copie di recupero.',
+
+  'sync.identityConflict':
+    'Identificatori incompatibili: nessun progetto locale è stato sostituito.',
+  'sync.alreadyLocal':
+    'Questo progetto è già su questo dispositivo. Aprilo e gestisci la sincronizzazione da Dropbox.',
+  'sync.deleted': 'Ripristina il progetto dal cestino prima di sincronizzarlo.',
+  'sync.noBase':
+    'Le copie differiscono e non hanno una base comune. Conserva una copia remota separata prima di confrontarle.',
+  'sync.conflict':
+    'Modifiche incompatibili: sincronizzazione in pausa. La copia locale e quella remota sono conservate.',
+  'sync.title': 'Sincronizzazione di questo progetto',
+  'sync.enable': 'Attiva sincronizzazione automatica',
+  'sync.disable': 'Disattiva sincronizzazione',
+  'sync.check': 'Controlla e sincronizza ora',
+  'sync.open': 'Apri come progetto sincronizzato',
+  'sync.explanation':
+    'Ogni minuto con app aperta e scheda visibile, confronta le copie e tenta di unire le modifiche. I conflitti non risolti mettono in pausa. I backup storici rimangono separati.',
+  'sync.synced': 'Copie allineate all’ultimo controllo',
+  'sync.local': 'Modifiche locali da inviare',
+  'sync.remote': 'Modifiche remote da ricevere',
+  'sync.diverged': 'Entrambe le copie modificate: tentativo di unione',
+  'sync.off': 'Sincronizzazione disattivata',
+  'sync.remoteCopy': 'Copia remota conservata',
+  'sync.recovery': 'Copie locali prima della sincronizzazione',
+  'sync.downloadRecovery': 'Scarica copia di recupero',
+
+  'dropbox.refreshFailed':
+    'Impossibile rinnovare il collegamento Dropbox. Controlla la connessione o collega nuovamente l’account.',
+  'dropbox.connected': 'Dropbox collegato',
+  'dropbox.projects': 'Progetti su Dropbox',
+  'dropbox.versions': 'Versioni disponibili',
+  'dropbox.date': 'Data',
+  'dropbox.size': 'Dimensione',
+  'dropbox.file': 'File',
+  'dropbox.back': 'Tutti i progetti Dropbox',
+  'dropbox.screen': 'Backup e Dropbox',
+  'dropbox.close': 'Torna al progetto',
+  'migration.container':
+    'Contenitore della struttura precedente, conservato come nota.',
+  'board.title': 'Vista globale dei capitoli',
+  'board.open': 'Apri capitolo',
+  'board.before': 'Sposta prima',
+  'board.after': 'Sposta dopo',
+  'board.back': 'Torna alla scrittura',
   'export.marginTop': 'Margine superiore (mm)',
   'export.marginRight': 'Margine destro (mm)',
   'export.marginBottom': 'Margine inferiore (mm)',

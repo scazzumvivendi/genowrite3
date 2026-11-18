@@ -10,7 +10,6 @@ import {
   addCounts,
   countContent,
   projectCounts,
-  readingMinutes,
   zeroCounts,
   type Counts,
 } from '../../modules/statistics/counts';
@@ -22,11 +21,9 @@ import {
 export function WritingStatistics({
   snapshot,
   node,
-  readingSpeed,
 }: {
   snapshot: ProjectSnapshot;
   node: ManuscriptNode | undefined;
-  readingSpeed: number;
 }) {
   const query = useLocalQuery(
     () =>
@@ -64,9 +61,7 @@ export function WritingStatistics({
           <strong>{value.words.toLocaleString(locale)}</strong>
           {t('parole_a57e3b')} <span className="stat-divider">·</span>{' '}
           <strong>{value.characters.toLocaleString(locale)}</strong>
-          {t('caratteri_016b5f')} <span className="stat-divider">·</span>{' '}
-          <strong>{readingMinutes(value.words, readingSpeed)}</strong>
-          {t('min_2e7573')}
+          {t('caratteri_016b5f')}
         </p>
       </section>
     );
@@ -76,14 +71,11 @@ export function WritingStatistics({
       className="writing-statistics"
       aria-label={t('statistiche_di_scrittura_723eaf')}
     >
-      <div className="statistics-heading">
-        {t('statistics.readingSpeed', { speed: readingSpeed })}
-        {query.error && (
-          <span role="alert">
-            {t('cache_non_disponibile_conteggi_ricostruiti_dal_testo_eb2028')}
-          </span>
-        )}
-      </div>
+      {query.error && (
+        <p role="alert">
+          {t('cache_non_disponibile_conteggi_ricostruiti_dal_testo_eb2028')}
+        </p>
+      )}
       <div className="statistics-groups">
         {group(
           t('statistiche_documento_corrente_3db4a0'),

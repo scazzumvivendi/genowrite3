@@ -1,4 +1,5 @@
 import { t } from '../i18n';
+import { readSync } from '../modules/dropbox/sync';
 import { useState } from 'react';
 import { db, readProject } from '../database/db';
 import { useLocalQuery } from '../hooks/useLocalQuery';
@@ -112,7 +113,10 @@ function ProjectLoader({
 }) {
   const query = useLocalQuery(
     () =>
-      db.transaction('r', db.projectTables, () => readProject(db, projectId)),
+      db.transaction('r', [...db.projectTables, db.preferences], async () => ({
+        snapshot: await readProject(db, projectId),
+        generation: (await readSync(projectId)).generation ?? '',
+      })),
     [projectId],
   );
   if (query.error && !query.value) {
@@ -125,7 +129,8 @@ function ProjectLoader({
   }
   return (
     <ProjectSession
-      snapshot={query.value}
+      snapshot={query.value.snapshot}
+      syncGeneration={query.value.generation}
       initialNodeId={initialNodeId}
       preferences={preferences}
       onProjects={onProjects}

@@ -115,11 +115,11 @@ Sanitize filenames and avoid invalid filesystem characters. Do not use project c
 
 ## Estensione autorizzata: Dropbox (novembre 2026)
 
-Il vincolo originale che esclude API remote e trasmissione di contenuti ammette
-ora importazione ed esportazione **opzionali ed esplicite** di backup JSON su
-Dropbox. Backup periodico in uscita opzionale, attivato per progetto, ogni minuto solo
-con modifiche e scheda visibile. Nessun merge, account Genowrite o backend.
-L’archivio locale e l’uso offline rimangono indipendenti da Dropbox. Ogni upload
-crea una copia distinta; il download passa dalla validazione e dall’anteprima,
-poi dalla conferma di ripristino come nuovo progetto. Token brevi nella sessione
-della scheda, OAuth PKCE senza secret. Dettagli in `docs/DROPBOX.md`.
+Dropbox è un’estensione opzionale autorizzata: backup manuali e periodici,
+sincronizzazione per progetto e tentativo di merge automatico con base comune.
+OAuth PKCE con refresh token persistente, senza secret o backend. Le copie di
+backup sono distinte dal file corrente sincronizzato. I conflitti sospendono la
+sync e conservano le versioni; le scelte di sostituzione richiedono conferma e
+salvano copie di recupero. Locale e offline restano indipendenti. La sync funziona
+con app aperta e scheda visibile. Dettagli in `docs/DROPBOX.md` e
+[REFINEMENTS.md](REFINEMENTS.md).

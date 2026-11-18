@@ -1,5 +1,4 @@
 import { t } from '../../i18n';
-import { writingStatusLabels } from '../../modules/manuscript/status';
 import { useEffect, useRef } from 'react';
 import type {
   ManuscriptDocument,
@@ -61,10 +60,9 @@ export function LocalDocument({
           path:
             node.type === 'scene'
               ? t('document.path.scene')
-              : t('document.path.chapter'),
+              : t('capitolo_288e49'),
         }}
         content={document.content}
-        statusLabel={writingStatusLabels[node.status]}
         rules={() => settings.current}
         diagnosticSettings={preferences}
         onChange={(content) => {

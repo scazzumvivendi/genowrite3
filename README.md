@@ -1,8 +1,10 @@
 # Genowrite 3
 
+<img src="public/icon.svg" alt="Genowrite 3" width="96" height="96" />
+
 Applicazione di scrittura **local-first**, senza account Genowrite, backend o
 telemetria. Importazione ed esportazione opzionali su Dropbox tramite API, solo
-su richiesta dell’utente. Implementate le funzionalità della roadmap in una versione
+su richiesta dell’utente o con backup/sincronizzazione esplicitamente attivati. Implementate le funzionalità della roadmap in una versione
 **3.0.0-beta.1**: progetti e manoscritti reali, editor, biblioteca, statistiche,
 backup, DOCX/TXT e funzionamento offline. Il rilascio definitivo resta subordinato
 ai gate manuali indicati nella [checklist](docs/RELEASE_CHECKLIST.md), in particolare
@@ -36,10 +38,11 @@ Per passare da un’origine all’altra usa backup e ripristino JSON.
 ## Funzionalità
 
 - Progetti con titolo, autore, descrizione e genere, cestino e ripristino.
-- Volumi, parti, capitoli, scene e cartelle con gerarchia validata. Capitoli con
+- Capitoli e scene con gerarchia validata. Capitoli con
   testo diretto oppure scene: conversione confermata, atomica e recuperabile.
-- Navigazione espandibile, rinomina, sinossi e stato; spostamento, riordino,
-  duplicazione indipendente, drag/drop e alternativa da tastiera in Organizza.
+- Navigazione espandibile, rinomina, sinossi, spostamento, riordino e duplicazione.
+  Bacheca dei capitoli con sinossi, drag/drop e pulsanti di riordino; nessun
+  trascinamento nella barra sinistra. Stati editoriali rimossi.
 - Editor TipTap con grassetto, corsivo, sottolineato, liste e titoli, undo/redo,
   ricerca e sostituzione nel documento. Montato solo il documento attivo.
 - Autosalvataggio locale, stati visibili e conflitti tra schede rilevati. Un errore
@@ -48,7 +51,7 @@ Per passare da un’origine all’altra usa backup e ripristino JSON.
   automatiche di acronimi. `e' ` diventa `è ` digitando lo spazio: **Backspace
   cancella normalmente**, Annulla/Ctrl+Z ripristina l’input precedente.
 - Statistiche del documento e del progetto sempre visibili in basso a sinistra,
-  anche in Zen; conteggi reali di parole e caratteri, lettura e cache ricostruibile.
+  anche in Zen; conteggi reali di parole e caratteri e cache ricostruibile.
 - Personaggi, luoghi, oggetti, note e ricerca con collegamenti manuali. Esclusi dal
   manoscritto e dai conteggi. Ricerca locale nel progetto e nella biblioteca.
 - Esportazione DOCX con profilo manoscritto/personalizzato, TXT UTF-8, ambito
@@ -103,57 +106,25 @@ localmente. Nessuna traduzione inglese aggiunta. Vedi [I18N.md](docs/I18N.md).
 
 ## Dropbox
 
-Importa ed esporta backup JSON completi dai dialoghi **Ripristina backup** ed
-**Esporta → Backup completo JSON**. Ogni importazione crea un nuovo progetto;
-ogni esportazione una copia distinta. Backup periodico opzionale ogni minuto dal pulsante **Dropbox**, solo se ci sono
-modifiche e mentre il progetto è aperto in una scheda visibile. Nessun merge automatico.
-Prima dell’uso va aggiunto il redirect Genowrite 3 nella console Dropbox:
-vedi [configurazione e uso](docs/DROPBOX.md).
+Il pulsante Dropbox apre una schermata dedicata: elenco per progetto, poi tabella
+delle versioni. Backup manuali e periodici separati dalla sincronizzazione.
+La sincronizzazione opzionale confronta le copie ogni minuto e tenta il merge;
+i conflitti sospendono gli aggiornamenti e conservano le copie. Da un altro
+dispositivo aprire il file corrente con **Apri come progetto sincronizzato**.
+Il ripristino ordinario crea invece una copia indipendente con nuovi ID.
+Il collegamento resta disponibile tra le sessioni tramite refresh token.
+Configurazione e limiti in [DROPBOX.md](docs/DROPBOX.md).
 
-## GitHub Pages
+## Revisione interfaccia
 
-Il repository è predisposto per `https://scazzumvivendi.github.io/genowrite3/`.
+Tema blu scuro, editor con bordo e spazio adattivo, interlinea minima 1 e
+larghezza fino a 2400 px. Ricerca e segnalazioni nella barra di formattazione;
+Zen conserva questa barra e i conteggi. L’installazione è nelle preferenze quando
+il browser la rende disponibile. La struttura precedente viene migrata conservando i contenitori come note di Biblioteca. Piano completo: [revisione autorizzata](specs/REFINEMENTS.md).
 
-1. In GitHub apri **Settings → Pages → Build and deployment → Source** e scegli
-   **GitHub Actions**.
-2. Porta queste modifiche su `main` con commit e push. Il workflow **Quality gates**
-   esegue i controlli e pubblica l’artefatto statico solo se passano. È disponibile
-   anche l’avvio manuale da **Actions → Quality gates → Run workflow**, su `main`.
-3. Apri l’URL indicato nel deployment `github-pages` dopo il completamento del job
-   `deploy-pages`.
-
-Il job `quality` costruisce una sola volta `dist-pages/`, la verifica con i test
-Pages e carica lo stesso artefatto per il deploy, senza ricompilarlo. Su `main`
-il percorso arriva da `actions/configure-pages`: supporta
-il sito di progetto, la radice e un eventuale dominio personalizzato configurato
-su GitHub. Non caricare i sorgenti come sito e non usare `docs/` come cartella
-pubblicata: l’artefatto contiene esclusivamente la build in `dist-pages/`.
-
-Per riprodurre localmente il percorso del repository:
-
-```sh
-npm run build:pages
-npm run preview -- --outDir dist-pages --base=/genowrite3/ --port 4174
-```
-
-Apri `http://127.0.0.1:4174/genowrite3/`. `npm run test:pages` verifica questo
-percorso con Chromium, Firefox e WebKit, compresi cache, aggiornamento, offline
-ed export DOCX. La build standard in `dist/` continua a funzionare alla radice.
-
-Il deploy non trasferisce progetti: per portare i dati da localhost a Pages usa
-backup e ripristino JSON. I dati rimangono nel browser sull’origine del sito;
-GitHub riceve soltanto i file statici dell’app. Vedi [DEPLOYMENT.md](docs/DEPLOYMENT.md).
-
-## Struttura e documentazione
-
-- `src/modules`: dominio, servizi, regole, statistiche, backup ed export.
-- `src/database`: schema IndexedDB v2 e migrazione della cache.
-- `src/components`: controlli e pannelli; `src/app`: composizione e PWA.
-- `build/offline-plugin.ts`: precache generato dagli asset della build.
-- `src/test/performance-fixture.ts`: dataset riproducibile da 100.000 parole.
-- `docs/PHASE_0.md` … `docs/PHASE_7.md`: rapporti incrementali e decisioni.
-- [Checklist di rilascio](docs/RELEASE_CHECKLIST.md), [architettura effettiva](docs/TECHNICAL_NOTES.md),
-  [dipendenze/licenze](docs/DEPENDENCIES.md).
-
-All’avvio si apre esclusivamente l’archivio reale, vuoto alla prima esecuzione.
-I progetti vengono creati dall’utente o ripristinati da backup.
+Il logo approvato è il cappello blu notte con righe chiare e risvolto a libro,
+applicato a interfaccia, favicon e icone PWA/Apple. Sorgente: `public/icon.svg`;
+`npm run icons` rigenera i PNG locali tramite Chromium (dipendenza di sviluppo).
+Le proposte precedenti restano in [anteprima](design/logo-proposals.html).
+La CI distribuisce i browser in tre job paralleli e pubblica solo dopo tutti i
+controlli; il nuovo tempo remoto va misurato alla prossima esecuzione GitHub.

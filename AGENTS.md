@@ -89,3 +89,11 @@ Target modern evergreen desktop browsers first: current Chrome, Edge and Firefox
 - Full desktop word-processing layout and page-layout editing.
 - Automatic entity extraction from manuscript text.
 - Complex worldbuilding databases.
+
+## Estensione autorizzata successiva
+
+Le richieste dell’utente di novembre 2026 autorizzano Dropbox opzionale con backup,
+OAuth PKCE persistente, sincronizzazione e tentativo di merge, senza backend o
+account Genowrite. Sovrascrivono i precedenti non-goal su cloud sync e API remote
+per questa sola integrazione. Locale e offline rimangono indipendenti.
+Requisiti aggiornati e lavoro incrementale in `specs/REFINEMENTS.md`.

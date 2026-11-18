@@ -9,8 +9,8 @@ export const manifest = {
   start_url: './',
   scope: './',
   display: 'standalone',
-  background_color: '#fef7ff',
-  theme_color: '#6750a4',
+  background_color: '#f8faff',
+  theme_color: '#102a43',
   icons: [
     {
       src: './icon-192.png',

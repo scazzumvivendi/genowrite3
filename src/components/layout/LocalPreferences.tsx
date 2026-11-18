@@ -5,6 +5,7 @@ import {
   savePreferences,
 } from '../../modules/settings/preferences';
 import { Modal } from '../common/Modal';
+import { useInstall } from '../../app/pwa/install';
 
 export function LocalPreferences({
   preferences,
@@ -13,6 +14,7 @@ export function LocalPreferences({
   preferences: Preferences;
   onClose: () => void;
 }) {
+  const install = useInstall();
   const [value, setValue] = useState(preferences);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -33,6 +35,11 @@ export function LocalPreferences({
       onClose={onClose}
       protectContent={false}
     >
+      {install && (
+        <button type="button" onClick={() => void install()}>
+          {t('installa_genowrite_e2e0d3')}
+        </button>
+      )}
       <p>
         <a
           href={`${import.meta.env.BASE_URL}third-party-notices.txt`}
@@ -97,7 +104,7 @@ export function LocalPreferences({
           {t('interlinea_377aec')}
           <input
             type="number"
-            min={1.2}
+            min={1}
             max={2.4}
             step={0.05}
             value={value.lineHeight}
@@ -111,23 +118,11 @@ export function LocalPreferences({
           <input
             type="number"
             min={400}
-            max={1000}
+            max={2400}
             step={20}
             value={value.textWidth}
             onChange={(event) =>
               setValue({ ...value, textWidth: Number(event.target.value) })
-            }
-          />
-        </label>
-        <label>
-          {t('velocita_lettura_parole_minuto_b7f3e5')}
-          <input
-            type="number"
-            min={80}
-            max={600}
-            value={value.readingSpeed}
-            onChange={(event) =>
-              setValue({ ...value, readingSpeed: Number(event.target.value) })
             }
           />
         </label>

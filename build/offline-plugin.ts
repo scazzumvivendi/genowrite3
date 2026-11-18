@@ -18,6 +18,7 @@ export function offlinePlugin(): Plugin {
         'manifest.webmanifest',
         'third-party-notices.txt',
         'icon.svg',
+        'icon-180.png',
         'icon-192.png',
         'icon-512.png',
       ];
@@ -74,8 +75,11 @@ self.addEventListener('fetch', event => {
     event.respondWith(caches.open(CACHE).then(cache => cache.match(BASE + 'index.html')).then(response => response || fetch(event.request)));
   } else if (ASSETS.includes(url.pathname) || url.pathname.startsWith(BASE + 'assets/')) {
     event.respondWith((async () => {
+      const current = await caches.open(CACHE);
+      const latest = await current.match(event.request, { ignoreSearch: true, ignoreVary: true });
+      if (latest) return latest;
       for (const key of await caches.keys()) {
-        if (key.startsWith(PREFIX)) {
+        if (key !== CACHE && key.startsWith(PREFIX)) {
           const match = await (await caches.open(key)).match(event.request, { ignoreSearch: true, ignoreVary: true });
           if (match) return match;
         }

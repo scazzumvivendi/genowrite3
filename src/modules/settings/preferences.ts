@@ -65,10 +65,10 @@ export function validatePreferences(value: Preferences) {
     !['Georgia', 'system-ui', 'monospace'].includes(value.font) ||
     value.fontSize < 14 ||
     value.fontSize > 32 ||
-    value.lineHeight < 1.2 ||
+    value.lineHeight < 1 ||
     value.lineHeight > 2.4 ||
     value.textWidth < 400 ||
-    value.textWidth > 1000 ||
+    value.textWidth > 2400 ||
     value.readingSpeed < 80 ||
     value.readingSpeed > 600 ||
     value.autosaveDelay < 300 ||

@@ -1,11 +1,12 @@
 import { t } from '../../i18n';
+import { simplifyManuscript } from '../manuscript/migrate';
 import { readProject, type GenowriteDatabase } from '../../database/db';
 import type { ProjectSnapshot } from '../manuscript/model';
 import { validateSnapshot } from '../manuscript/validation';
 
 export interface ProjectBackup {
   format: 'genowrite3';
-  version: 1;
+  version: 1 | 2;
   exportedAt: string;
   snapshot: ProjectSnapshot;
 }
@@ -35,7 +36,10 @@ export function parseBackup(text: string): ProjectBackup {
     throw new Error(t('backup_troppo_grande_limite_100_mb_cef12c'));
   }
   const backup = record(JSON.parse(text));
-  if (backup.format !== 'genowrite3' || backup.version !== 1) {
+  if (
+    backup.format !== 'genowrite3' ||
+    ![1, 2].includes(Number(backup.version))
+  ) {
     throw new Error(t('formato_o_versione_del_backup_non_supportati_b52b1e'));
   }
   strings(backup, ['exportedAt']);
@@ -68,26 +72,12 @@ export function parseBackup(text: string): ProjectBackup {
       const row = record(input);
       strings(row, commonFields);
       if (key === 'nodes') {
-        strings(row, [
-          'title',
-          'type',
-          'synopsis',
-          'status',
-          'createdAt',
-          'updatedAt',
-        ]);
+        strings(row, ['title', 'type', 'synopsis', 'createdAt', 'updatedAt']);
         if (
           !['volume', 'part', 'chapter', 'scene', 'folder'].includes(
             String(row.type),
           ) ||
-          (row.parentId !== null && typeof row.parentId !== 'string') ||
-          ![
-            'planned',
-            'in_progress',
-            'first_draft',
-            'revised',
-            'final',
-          ].includes(String(row.status))
+          (row.parentId !== null && typeof row.parentId !== 'string')
         ) {
           throw new Error(t('nodo_non_valido_bd26c1'));
         }
@@ -154,7 +144,10 @@ export function parseBackup(text: string): ProjectBackup {
     throw new Error(t('impostazioni_progetto_non_valide_433188'));
   }
   const result = backup as unknown as ProjectBackup;
+  validateSnapshot(result.snapshot, true);
+  simplifyManuscript(result.snapshot);
   validateSnapshot(result.snapshot);
+  result.version = 2;
   return result;
 }
 
@@ -167,7 +160,7 @@ export async function exportBackup(
     return JSON.stringify(
       {
         format: 'genowrite3',
-        version: 1,
+        version: 2,
         exportedAt: new Date().toISOString(),
         snapshot,
       } satisfies ProjectBackup,

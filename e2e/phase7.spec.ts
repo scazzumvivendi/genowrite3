@@ -11,7 +11,7 @@ for (const chapters of [40, 1]) {
     await page
       .getByRole('button', { name: 'Ripristina backup', exact: true })
       .click();
-    const restore = page.getByRole('dialog', {
+    const restore = page.getByRole('main', {
       name: 'Ripristina backup JSON',
     });
     const input = Buffer.from(

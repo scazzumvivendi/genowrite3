@@ -1,105 +1,107 @@
-# Importazione ed esportazione Dropbox
+# Dropbox: backup e sincronizzazione opzionali
 
-Estensione autorizzata dopo la prima release: Dropbox è opzionale e trasferisce
-backup JSON completi su comando dell’utente o tramite backup periodico esplicitamente attivato. Non sincronizza progetti,
-non unisce versioni e non propaga cancellazioni. Non richiede backend né SDK remoto.
+Genowrite funziona localmente e offline senza Dropbox. L’integrazione è opzionale,
+senza backend o account Genowrite; nessun SDK o asset remoto. Il collegamento non
+invia progetti: backup periodico e sincronizzazione si attivano per progetto.
 
-## Configurazione dell’app Dropbox
+## Configurazione
 
-La App key pubblica fornita per Genowrite è `ksxl1uointtcidi`. Non è un segreto.
-È possibile sostituirla alla build con `VITE_DROPBOX_APP_KEY`. Non inserire mai
-App secret o access token nella configurazione Vite o nel repository.
+App key pubblica predefinita: `ksxl1uointtcidi`, sostituibile alla build tramite
+`VITE_DROPBOX_APP_KEY`. Non inserire secret o token nella configurazione Vite.
+Nella console Dropbox:
 
-Nella [console Dropbox](https://www.dropbox.com/developers/apps), aprire l’app:
+1. Registrare esattamente `https://scazzumvivendi.github.io/genowrite3/index.html`
+   e gli eventuali redirect locali `http://127.0.0.1:5173/index.html` e
+   `http://127.0.0.1:4173/index.html`.
+2. Abilitare `files.metadata.read`, `files.content.read`, `files.content.write`.
+3. Abilitare **Allow public clients (Implicit Grant & PKCE)**. Genowrite usa solo
+   Authorization Code con PKCE S256, ora con `token_access_type=offline`.
+4. Preferire un’app **App folder**. La vecchia key mantiene il tipo configurato:
+   con Full Dropbox, la radice accessibile è quella dell’account. Non si cambia
+   automaticamente key o cartella, per mantenere raggiungibili i backup esistenti.
+5. Verificare stato sviluppo/produzione e autorizzazioni per gli altri utenti.
 
-1. Aggiungere come Redirect URI esatto `https://scazzumvivendi.github.io/genowrite3/index.html`.
-   Il vecchio redirect `/genowrite2/index.html` non basta. Per prove locali,
-   aggiungere anche `http://127.0.0.1:5173/index.html` e/o `http://127.0.0.1:4173/index.html`.
-   Un dominio personalizzato richiede il corrispondente URL con `index.html`.
-2. Abilitare i permessi `files.metadata.read`, `files.content.read` e
-   `files.content.write`, quindi applicare le modifiche.
-3. Abilitare **Allow public clients (Implicit Grant & PKCE)**: il codice usa
-   esclusivamente Authorization Code con PKCE S256.
-4. Verificare il tipo di accesso dell’app. Per una nuova registrazione scegliere
-   **App folder**, che limita i permessi alla cartella dell’app. La vecchia key
-   mantiene il tipo già configurato: con **Full Dropbox**, i backup sono scritti
-   ed elencati nella radice di Dropbox. Per limitare l’accesso usare una nuova
-   App folder key tramite `VITE_DROPBOX_APP_KEY`.
-5. Per distribuire a utenti diversi dal proprietario, verificare nella console
-   lo stato di sviluppo/produzione e gli eventuali requisiti Dropbox per l’app.
+Un collegamento precedente va ripetuto una volta per ottenere il refresh token.
+La configurazione della console e il consenso con account reale richiedono prova
+manuale: i test usano API simulate e nessun manoscritto reale viene trasferito.
 
-La configurazione remota e il consenso con un account reale restano verifiche
-manuali: i test automatici usano API simulate e non trasferiscono manoscritti reali.
+## Schermata backup
 
-L’upload invia il JSON come stringa UTF-8 con tipo `application/octet-stream`;
-un Blob ne misura la dimensione in byte prima dell’invio. Il corpo testuale
-permette di verificare il contenuto tramite il routing Playwright anche su WebKit,
-che può non esporre il corpo delle richieste con payload Blob.
+Dropbox nella barra principale apre una schermata intera, disponibile anche da
+Esporta. Ripristina backup nell’archivio offre la stessa consultazione Dropbox e
+l’importazione di un file locale. Prima di lasciare l’editor si salva la bozza.
 
-## Uso
+Mostra backup Dropbox elenca i file `.genowrite3.json` nella radice accessibile,
+con tutte le pagine API. Prima mostra i progetti, poi le versioni in tabella con
+data, dimensione e file. I nuovi nomi includono ID progetto stabile; i vecchi
+backup, privi di ID nel nome, sono raggruppati per titolo ricavato dal filename.
+Due titoli legacy uguali possono condividere il gruppo. Non è un file manager
+arbitrario di Dropbox e non naviga cartelle annidate.
 
-Usare il pulsante **Dropbox** nella barra principale oppure il pannello Dropbox sempre visibile in **Esporta**, quindi scegliere **Collega Dropbox**.
-Prima del redirect le modifiche dell’editor vengono salvate; al ritorno riaprire
-il dialogo e scegliere **Esporta su Dropbox**. Il collegamento da solo non invia
-contenuti. Ogni esportazione crea un nome con titolo, data e UUID, senza sostituire
-backup precedenti. La conferma mostra il nome restituito da Dropbox.
+Ogni backup manuale o periodico crea una copia con titolo, ID progetto, timestamp
+e UUID. Il backup periodico invia ogni minuto solo se cambia lo snapshot, con
+progetto aperto e scheda visibile. Non elimina le versioni precedenti. Un errore
+lo mette in pausa con avviso; invii dall’esito di rete incerto non vengono ritentati
+in automatico, per evitare copie duplicate. Un invio già iniziato può terminare
+dopo la disattivazione.
 
-Da **Progetti → Ripristina backup**, collegare Dropbox se necessario, scegliere
-**Mostra backup Dropbox**, poi il file. L’elenco mostra i file `.genowrite3.json`
-nella radice accessibile all’app, dal più recente; include tutte le pagine API.
-Il download valida il backup e mostra il riepilogo. Solo **Ripristina come nuovo
-progetto** scrive nell’archivio locale, con nuovi ID e una transazione atomica.
-I backup di Genowrite 2 non sono compatibili.
+Il download valida e mostra l’anteprima. Ripristina come nuovo progetto mantiene
+il comportamento precedente: nuovi ID, relazioni rimappate e transazione atomica.
+Backup v1 vengono migrati, v2 è il formato esportato; Genowrite 1/2 non sono importati.
+Limite applicativo: 100 MB per trasferimento. Nessun JSON viene eseguito come HTML.
 
-Per importare un backup locale su Dropbox, copiarlo nella radice accessibile
-all’app mantenendo l’estensione `.genowrite3.json`. Il limite per ogni trasferimento
-è 100 MB; i backup locali continuano a essere disponibili.
+## Sincronizzazione
 
-## Sessione, offline ed errori
+Attiva sincronizzazione automatica crea un file corrente per progetto, distinto
+dai backup storici: `Titolo--ID--current.genowrite3.json`. L’app conserva localmente
+base comune, ID file e revisione Dropbox. La rinomina del progetto non cambia
+l’identità del file già collegato.
 
-Token brevi in `sessionStorage`, separati dai token storici di Genowrite 2; nessun
-refresh token, nessun token persistente in IndexedDB o localStorage. Alla scadenza
-si ricollega l’account. **Scollega Dropbox** cancella il collegamento della scheda;
-per revocare l’autorizzazione dell’app usare le impostazioni dell’account Dropbox.
+Su un altro dispositivo, scegliere il file corrente dalla tabella e **Apri come
+progetto sincronizzato**. Gli ID vengono preservati, la copia corrente viene
+riletta prima di importarla e viene attivata la sync. Se lo stesso progetto è già
+presente localmente, aprirlo: non viene sovrascritto tramite importazione. Il normale
+ripristino resta una copia indipendente e non abilita trasferimenti automatici.
 
-Il callback verifica stato OAuth, redirect e durata massima di dieci minuti,
-rimuove il codice dall’URL ed evita doppi scambi in React StrictMode. I trasferimenti
-hanno timeout; errori di rete, token scaduti o backup non validi sono visibili.
-Non ci sono retry automatici che possano creare copie aggiuntive dopo un upload
-con esito di rete incerto. In questo caso controllare Dropbox prima di riprovare.
+Ogni minuto con scheda visibile e senza finestre di modifica aperte, oppure con
+Controlla e sincronizza ora, confronta locale/remoto/base. Indica modifiche locali,
+remote, divergenze o stato allineato all’ultimo controllo. Un errore rende esplicito
+che il controllo non è riuscito. Non ci sono notifiche push o lavoro ad app chiusa.
 
-La scrittura e i backup locali funzionano offline. Solo i comandi Dropbox
-richiedono rete e consenso. La CSP ammette le connessioni a `api.dropboxapi.com` e
-`content.dropboxapi.com`; script, font e asset rimangono locali.
+Il merge prova modifiche a entità separate e intervalli distinti dello stesso
+testo, preservando il JSON ricco. Modifiche sovrapposte o strutture incompatibili
+sospendono la sync e conservano la copia remota localmente senza sostituire quella
+locale. L’utente può ripristinare il remoto come progetto distinto, confrontare e
+modificare manualmente, oppure scegliere una copia con conferma. Prima di questa
+scelta entrambe vengono conservate nelle copie di recupero scaricabili; una copia
+locale viene salvata anche prima di ricevere automaticamente modifiche remote.
+Le copie di recupero restano nel browser finché i dati del sito sono conservati;
+non sostituiscono un backup esterno. Non sono eliminate automaticamente.
+
+Upload con confronto della revisione Dropbox (`mode=update`, `strict_conflict`):
+un’altra modifica remota non viene sovrascritta. Se il locale cambia durante la
+rete, non si applica uno snapshot obsoleto; il confronto verrà ripetuto. Prima
+dell’applicazione locale si blocca brevemente l’editor e si salva la coda; scrittura
+e checkpoint sono atomici. Identificatori di altri progetti locali sono protetti.
+Un file remoto scomparso o un progetto cestinato non viene ricreato automaticamente.
+
+## Collegamento e dati locali
+
+Access token e refresh token ottenuti con PKCE vengono conservati in localStorage
+per restare collegati dopo la chiusura della scheda. I vecchi token senza refresh
+rimangono nella sessione. Le credenziali sono separate da backup e JSON di progetto.
+Un refresh rinnova l’access token alla scadenza; richieste simultanee nella stessa
+scheda condividono il rinnovo. Non si può garantire collegamento perpetuo: revoca,
+cancellazione dei dati del sito o invalidazione Dropbox richiedono nuovo consenso.
+
+Scollega Dropbox rimuove le credenziali di quest’origine. Per revocare l’autorizzazione
+usare anche le impostazioni Dropbox. La persistenza non cifrata è quella del browser:
+non condividere il profilo del browser con persone che non devono accedere all’account.
+Errori di rete non cancellano il refresh token; `invalid_grant` lo elimina.
+La CSP consente solo le API Dropbox necessarie, non script o font esterni.
 
 ## Riferimenti
 
-- [OAuth e PKCE](https://docs.dropboxapi.com/dropbox-api/docs/oauth)
-- [Elenco file](https://docs.dropboxapi.com/dropbox-api/api-reference/user-endpoints/files/list-folder)
-- [Upload](https://docs.dropboxapi.com/dropbox-api/api-reference/user-endpoints/files/upload)
-- [Download](https://docs.dropboxapi.com/dropbox-api/api-reference/user-endpoints/files/download)
-
-## Verifiche eseguite
-
-Build strict, ESLint e Prettier superati; 46 test unitari/integrativi superati,
-compresi PKCE, callback, scadenza/revoca, paginazione, Unicode, upload e validazione.
-Il test Chromium con API simulate verifica esportazione dell’ultima bozza,
-anteprima, ripristino del testo e conservazione di entrambi i progetti.
-L’autorizzazione reale con la App key fornita richiede la configurazione in console.
-
-Dopo la correzione del payload per WebKit: build, lint, formattazione e 53 test
-unitari/integrativi superati; entrambi i test Dropbox superati su Chromium e
-Firefox (4 E2E). La verifica locale WebKit resta bloccata all’avvio dalla mancanza
-di `libicu74` nel sistema host e va completata in CI.
-
-## Backup periodico
-
-Il pulsante **Dropbox** nella barra principale apre il comando **Attiva backup
-automatico**, disattivato per impostazione iniziale. La scelta è locale e per
-progetto, separata dal JSON: importare un progetto non attiva invii automatici.
-Ogni minuto con progetto aperto e scheda visibile si salva prima l’editor, poi
-si confronta l’hash del progetto con l’ultimo backup riuscito. Senza modifiche
-non si invia. Ogni invio crea una copia distinta; non vengono cancellati i backup
-precedenti. La scadenza del token o un errore mette in pausa con avviso visibile;
-ricollegare Dropbox e riattivare per riprendere. Chiudere l’app ferma il timer.
-Disattivare impedisce gli invii successivi; un upload già partito può terminare.
+- [OAuth e refresh token](https://docs.dropboxapi.com/dropbox-api/docs/oauth)
+- [Download e metadati di revisione](https://docs.dropboxapi.com/dropbox-api/api-reference/user-endpoints/files/download)
+- [Upload con revisione](https://docs.dropboxapi.com/dropbox-api/api-reference/user-endpoints/files/upload)

@@ -20,12 +20,9 @@ jobs:
         with:
           node-version-file: .tool-versions
           cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npm ci --no-audit --no-fund
       - run: npm run build
       - run: npm test
-      - run: npm run test:browsers
-      - run: npm run test:dev
       - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         id: pages
@@ -33,21 +30,47 @@ jobs:
         env:
           PAGES_BASE_PATH: ${{ (github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && format('{0}/', steps.pages.outputs.base_path)) || '/genowrite3/' }}
         run: npm run build -- --base="${PAGES_BASE_PATH%/}/" --outDir=dist-pages
-      - run: npm run test:pages
-        env:
-          PAGES_BASE_PATH: ${{ (github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && format('{0}/', steps.pages.outputs.base_path)) || '/genowrite3/' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: application-builds
+          path: |
+            dist/
+            dist-pages/
+          retention-days: 1
       - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: dist-pages
+  browsers:
+    needs: quality
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .tool-versions
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps ${{ matrix.browser }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: application-builds
+      - run: npm run test:browsers -- --project=${{ matrix.browser }}
+      - run: npm run test:dev
+        if: matrix.browser == 'chromium'
+      - run: npm run test:pages -- --project=${{ matrix.browser }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: browser-results
+          name: browser-results-${{ matrix.browser }}
           path: test-results/
   deploy-pages:
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: quality
+    needs: [quality, browsers]
     runs-on: ubuntu-latest
     permissions:
       pages: write

@@ -1,26 +1,32 @@
 import { t } from '../../i18n';
 import { parseBackup } from '../backup/backup';
 import { safeFilename } from '../export/manuscript';
-import { disconnectDropbox, dropboxToken } from './auth';
+import { disconnectDropbox, validDropboxToken } from './auth';
 
 export interface DropboxFile {
   id: string;
   name: string;
   size: number;
   server_modified: string;
+  rev?: string;
+  path_lower?: string;
+}
+export class DropboxApiError extends Error {
+  constructor(
+    public status: number,
+    public summary: string,
+    message: string,
+  ) {
+    super(message);
+  }
 }
 const maximumSize = 100_000_000;
-async function request(
+export async function dropboxRequest(
   url: string,
   headers: Record<string, string>,
   body?: BodyInit,
 ) {
-  const token = dropboxToken();
-  if (!token) {
-    throw new Error(
-      t('collega_nuovamente_dropbox_la_sessione_e_scaduta_e4f6f8'),
-    );
-  }
+  const token = await validDropboxToken();
   let response: Response;
   try {
     response = await fetch(url, {
@@ -46,7 +52,10 @@ async function request(
     );
   }
   if (!response.ok) {
-    throw new Error(
+    const detail = await response.json().catch(() => ({}));
+    throw new DropboxApiError(
+      response.status,
+      String(detail.error_summary ?? ''),
       response.status === 429
         ? t('troppe_richieste_a_dropbox_attendi_e_riprova_b529ca')
         : t(
@@ -58,7 +67,7 @@ async function request(
   return response;
 }
 function rpc(endpoint: string, data: unknown) {
-  return request(
+  return dropboxRequest(
     `https://api.dropboxapi.com/2/${endpoint}`,
     { 'Content-Type': 'application/json' },
     JSON.stringify(data),
@@ -106,8 +115,8 @@ export async function uploadDropboxBackup(text: string) {
     throw new Error(t('il_backup_supera_100_mb_usa_il_backup_locale_4c7c89'));
   }
   const stamp = new Date().toISOString().replace(/[:.]/gu, '-');
-  const name = `${safeFilename(backup.snapshot.project.title).slice(0, 100)}-${stamp}-${crypto.randomUUID()}.genowrite3.json`;
-  const response = await request(
+  const name = `${safeFilename(backup.snapshot.project.title).slice(0, 100)}--${backup.snapshot.project.id}--${stamp}-${crypto.randomUUID()}.genowrite3.json`;
+  const response = await dropboxRequest(
     'https://content.dropboxapi.com/2/files/upload',
     {
       'Content-Type': 'application/octet-stream',
@@ -128,7 +137,7 @@ export async function downloadDropboxBackup(file: DropboxFile) {
   if (file.size > maximumSize) {
     throw new Error(t('il_backup_supera_100_mb_f34da0'));
   }
-  const response = await request(
+  const response = await dropboxRequest(
     'https://content.dropboxapi.com/2/files/download',
     { 'Dropbox-API-Arg': apiArgument({ path: file.id }) },
   );

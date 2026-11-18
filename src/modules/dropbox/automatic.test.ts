@@ -3,12 +3,12 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { GenowriteDatabase, readProject } from '../../database/db';
 import { ProjectService } from '../storage/project-service';
 import { automaticBackupTick, readAutomatic, setAutomatic } from './automatic';
-import { dropboxToken } from './auth';
-vi.mock('./auth', () => ({ dropboxToken: vi.fn(() => 'token') }));
+import { dropboxConnected } from './auth';
+vi.mock('./auth', () => ({ dropboxConnected: vi.fn(() => 'token') }));
 let database: GenowriteDatabase;
 let id: string;
 beforeEach(async () => {
-  vi.mocked(dropboxToken).mockReturnValue('token');
+  vi.mocked(dropboxConnected).mockReturnValue(true);
   database = new GenowriteDatabase(`automatic-${crypto.randomUUID()}`);
   id = await new ProjectService(database).createProject('Automatico');
 });
@@ -47,7 +47,7 @@ it('upload fallito e token scaduto mettono in pausa senza modificare il progetto
   await automaticBackupTick(id, async () => undefined, database, upload);
   expect(upload).toHaveBeenCalledTimes(1);
   await setAutomatic(id, true, database);
-  vi.mocked(dropboxToken).mockReturnValue(undefined);
+  vi.mocked(dropboxConnected).mockReturnValue(false);
   await automaticBackupTick(id, async () => undefined, database, upload);
   expect((await readAutomatic(id, database)).enabled).toBe(false);
   await expect(setAutomatic(id, true, database)).rejects.toThrow(

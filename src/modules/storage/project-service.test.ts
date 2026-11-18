@@ -59,21 +59,14 @@ describe('dominio e transazioni', () => {
     await expect(
       f.service.addNode(f.projectId, f.chapterId, 'scene', 'Scena'),
     ).rejects.toThrow();
-    const folder = await f.service.addNode(
-      f.projectId,
-      null,
-      'folder',
-      'Cartella',
-    );
-    const child = await f.service.addNode(
-      f.projectId,
-      folder,
-      'folder',
-      'Sotto',
-    );
+    for (const type of ['folder', 'volume', 'part'] as const) {
+      await expect(
+        f.service.addNode(f.projectId, null, type, 'No'),
+      ).rejects.toThrow();
+    }
     await expect(
-      f.service.moveNode(f.projectId, folder, child, 0),
-    ).rejects.toThrow('ciclo');
+      f.service.moveNode(f.projectId, f.chapterId, f.chapterId, 0),
+    ).rejects.toThrow();
     const other = await f.service.createProject('Altro');
     await expect(
       f.service.addNode(other, f.chapterId, 'chapter', 'No'),
@@ -82,9 +75,16 @@ describe('dominio e transazioni', () => {
   it('sposta senza cambiare ID o contenuti', async () => {
     const f = await fixture();
     await f.service.saveDocument(f.document.id, content, 0);
-    const part = await f.service.addNode(f.projectId, null, 'part', 'Parte');
-    await f.service.moveNode(f.projectId, f.chapterId, part, 0);
-    expect((await f.database.nodes.get(f.chapterId))?.parentId).toBe(part);
+    const otherChapter = await f.service.addNode(
+      f.projectId,
+      null,
+      'chapter',
+      'Altro',
+    );
+    await f.service.moveNode(f.projectId, f.chapterId, null, 1);
+    expect((await f.database.nodes.get(f.chapterId))?.parentId).toBeNull();
+    expect((await f.database.nodes.get(f.chapterId))?.order).toBe(1);
+    expect((await f.database.nodes.get(otherChapter))?.order).toBe(0);
     expect((await f.database.documents.get(f.document.id))?.content).toEqual(
       content,
     );

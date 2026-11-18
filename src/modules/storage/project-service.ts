@@ -119,7 +119,6 @@ export class ProjectService {
               .map((n) => n.order),
           ) + 1,
         synopsis: '',
-        status: 'planned',
         createdAt: now,
         updatedAt: now,
       };
@@ -145,7 +144,7 @@ export class ProjectService {
   updateNode(
     projectId: string,
     id: string,
-    values: Partial<Pick<ManuscriptNode, 'title' | 'synopsis' | 'status'>>,
+    values: Partial<Pick<ManuscriptNode, 'title' | 'synopsis'>>,
   ) {
     return this.mutate(projectId, (snapshot) => {
       const node = snapshot.nodes.find((n) => n.id === id && !n.deletedAt);
@@ -194,7 +193,6 @@ export class ProjectService {
         title: t('scena_1_610894'),
         order: 0,
         synopsis: '',
-        status: chapter.status,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         documentId: document.id,

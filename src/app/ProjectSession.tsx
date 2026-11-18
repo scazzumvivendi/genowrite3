@@ -1,4 +1,6 @@
 import { t } from '../i18n';
+import { useDropboxSync } from '../hooks/useDropboxSync';
+import { ChapterBoard } from '../components/navigation/ChapterBoard';
 import { DropboxDialog } from '../components/dropbox/DropboxDialog';
 import { useDropboxAutomatic } from '../hooks/useDropboxAutomatic';
 import { useSystemTheme } from '../hooks/useSystemTheme';
@@ -40,12 +42,14 @@ export function ProjectSession({
   preferences,
   onProjects,
   readError,
+  syncGeneration,
 }: {
   snapshot: ProjectSnapshot;
   initialNodeId: string | undefined;
   preferences: Preferences;
   onProjects: () => void;
   readError: string | undefined;
+  syncGeneration: string;
 }) {
   const compact = useCompactLayout();
   const systemDark = useSystemTheme();
@@ -53,6 +57,7 @@ export function ProjectSession({
   const [navigation, setNavigation] = useState(!compact);
   const [inspector, setInspector] = useState(false);
   const [zen, setZen] = useState(false);
+  const [board, setBoard] = useState(false);
   const [dialog, setDialog] = useState<
     | 'create'
     | 'manage'
@@ -80,6 +85,21 @@ export function ProjectSession({
         preferences.autosaveDelay,
       ),
   );
+  const [editorGeneration, setEditorGeneration] = useState({
+    observed: syncGeneration,
+    applied: syncGeneration,
+  });
+  if (editorGeneration.observed !== syncGeneration) {
+    setEditorGeneration({
+      observed: syncGeneration,
+      applied: saver.dirty ? editorGeneration.applied : syncGeneration,
+    });
+  }
+  const sync = useDropboxSync(
+    snapshot.project.id,
+    saver,
+    Boolean(dialog) || board,
+  );
   const automatic = useDropboxAutomatic(snapshot.project.id, saver);
   // Un cestinamento concorrente non deve smontare l’editor con una bozza aperta.
   const node = snapshot.nodes.find((item) => item.id === activeId);
@@ -88,6 +108,8 @@ export function ProjectSession({
   );
   const warning =
     error ||
+    sync.value?.error ||
+    sync.error ||
     automatic.error ||
     (automatic.value?.error
       ? t('backup_dropbox_in_pausa_value0_1edbfd', {
@@ -170,6 +192,18 @@ export function ProjectSession({
       );
     });
   }
+  if (dialog === 'dropbox') {
+    return (
+      <div className="theme" data-theme={dark ? 'dark' : 'light'}>
+        <DropboxDialog
+          projectId={snapshot.project.id}
+          flush={() => saver.flush()}
+          onClose={() => setDialog(undefined)}
+          onRestored={() => onProjects()}
+        />
+      </div>
+    );
+  }
   return (
     <div
       className={`theme writing-shell${zen ? ' is-zen' : ''}`}
@@ -202,8 +236,9 @@ export function ProjectSession({
         onProperties={() => void run(() => setDialog('project'))}
         onPreferences={() => setDialog('preferences')}
         onExport={() => setDialog('export')}
-        onDropbox={() => setDialog('dropbox')}
+        onDropbox={() => void run(() => setDialog('dropbox'))}
         dropboxActive={automatic.value?.enabled ?? false}
+        syncActive={sync.value?.enabled ?? false}
       />
       <div
         className="workspace-grid"
@@ -218,16 +253,7 @@ export function ProjectSession({
             onClose={() => closePanel('navigation')}
             onCreate={() => setDialog('create')}
             onManage={() => setDialog('manage')}
-            onMove={(id, parentId, index) =>
-              void run(() =>
-                projectService.moveNode(
-                  snapshot.project.id,
-                  id,
-                  parentId,
-                  index,
-                ),
-              )
-            }
+            onBoard={() => void run(() => setBoard(true))}
             onContext={(id) =>
               void run(() => {
                 setActiveId(id);
@@ -242,7 +268,25 @@ export function ProjectSession({
             onSearch={() => void run(() => setDialog('search'))}
           />
         )}
-        {document && node ? (
+        {board ? (
+          <ChapterBoard
+            snapshot={snapshot}
+            onClose={() => setBoard(false)}
+            onSelect={(id) => {
+              setBoard(false);
+              select(id);
+            }}
+            onMove={(id, index) =>
+              void run(() =>
+                projectService.moveNode(snapshot.project.id, id, null, index),
+              )
+            }
+            onManage={(id) => {
+              setActiveId(id);
+              setDialog('manage');
+            }}
+          />
+        ) : document && node ? (
           <Suspense
             fallback={
               <main className="writing-main" role="status">
@@ -251,7 +295,7 @@ export function ProjectSession({
             }
           >
             <LocalDocument
-              key={document.id}
+              key={`${document.id}:${editorGeneration.applied}`}
               node={node}
               document={document}
               saver={saver}
@@ -363,11 +407,7 @@ export function ProjectSession({
           </aside>
         )}
       </div>
-      <WritingStatistics
-        snapshot={snapshot}
-        node={node}
-        readingSpeed={preferences.readingSpeed}
-      />
+      <WritingStatistics snapshot={snapshot} node={node} />
       {warning && (
         <div className="error-banner" role="alert">
           <p>{warning}</p>
@@ -402,7 +442,7 @@ export function ProjectSession({
                   [
                     JSON.stringify({
                       format: 'genowrite3',
-                      version: 1,
+                      version: 2,
                       exportedAt: new Date().toISOString(),
                       snapshot: copy,
                     }),
@@ -440,15 +480,9 @@ export function ProjectSession({
           onDeleted={onProjects}
         />
       )}
-      {dialog === 'dropbox' && (
-        <DropboxDialog
-          projectId={snapshot.project.id}
-          flush={() => saver.flush()}
-          onClose={() => setDialog(undefined)}
-        />
-      )}
       {dialog === 'export' && (
         <ExportDialog
+          onDropbox={() => void run(() => setDialog('dropbox'))}
           snapshot={snapshot}
           defaultProfile={preferences.defaultExportProfile}
           flush={() => saver.flush()}

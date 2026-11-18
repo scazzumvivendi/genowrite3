@@ -1,8 +1,6 @@
 import type { JSONContent } from '@tiptap/core';
 
 export type NodeType = 'volume' | 'part' | 'chapter' | 'scene' | 'folder';
-export type WritingStatus =
-  'planned' | 'in_progress' | 'first_draft' | 'revised' | 'final';
 export interface Project {
   id: string;
   title: string;
@@ -21,7 +19,6 @@ export interface ManuscriptNode {
   title: string;
   order: number;
   synopsis: string;
-  status: WritingStatus;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string;

@@ -1,4 +1,10 @@
 const paths = {
+  up: 'm6 14 6-6 6 6',
+  down: 'm6 10 6 6 6-6',
+  search: 'M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm5 12 6 6',
+  diagnostics: 'm12 3 10 18H2L12 3Zm0 6v5m0 3v1',
+  dropbox:
+    'm7 3 5 3-5 3-5-3 5-3Zm10 0 5 3-5 3-5-3 5-3ZM7 9l5 3-5 3-5-3 5-3Zm10 0 5 3-5 3-5-3 5-3ZM7 17l5 3 5-3',
   numbered: 'M3 4h1v5M3 9h2M3 13c3-2 3 1 1 2l-1 2h3M9 6h12M9 12h12M9 18h12',
   menu: 'M4 6h16M4 12h16M4 18h16',
   inspector: 'M14 4v16M4 4h16v16H4zM17 8h1M17 12h1',

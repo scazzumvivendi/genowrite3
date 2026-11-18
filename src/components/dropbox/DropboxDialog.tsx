@@ -1,6 +1,10 @@
 import { t, locale } from '../../i18n';
 import { useState } from 'react';
-import { Modal } from '../common/Modal';
+import type { DropboxFile } from '../../modules/dropbox/files';
+import { SyncPanel } from './SyncPanel';
+import { Screen } from '../common/Screen';
+import { BackupPreview } from '../export/RestoreDialog';
+import type { ProjectBackup } from '../../modules/backup/backup';
 import { DropboxPanel } from './DropboxPanel';
 import { db } from '../../database/db';
 import { exportBackup } from '../../modules/backup/backup';
@@ -11,26 +15,38 @@ export function DropboxDialog({
   projectId,
   flush,
   onClose,
+  onRestored,
 }: {
   projectId: string;
   flush: () => Promise<void>;
   onClose: () => void;
+  onRestored: (id: string) => void;
 }) {
   const query = useLocalQuery(() => readAutomatic(projectId), [projectId]);
+  const [remoteFile, setRemoteFile] = useState<DropboxFile>();
+  const [backup, setBackup] = useState<ProjectBackup>();
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   return (
-    <Modal
-      title={t('backup_dropbox_59f66f')}
-      onClose={onClose}
-      protectContent={false}
-    >
+    <Screen title={t('dropbox.screen')} onClose={onClose}>
+      <SyncPanel projectId={projectId} flush={flush} onRestored={onRestored} />
       <DropboxPanel
+        onImport={(value, file) => {
+          setBackup(value);
+          setRemoteFile(file);
+        }}
         prepareExport={async () => {
           await flush();
           return exportBackup(db, projectId);
         }}
       />
+      {backup && (
+        <BackupPreview
+          backup={backup}
+          onRestored={onRestored}
+          {...(remoteFile ? { remoteFile } : {})}
+        />
+      )}
       <fieldset disabled={busy || !query.value}>
         <legend>{t('backup_periodico_di_questo_progetto_3ea886')}</legend>
         <p>
@@ -76,6 +92,6 @@ export function DropboxDialog({
         )}
       </fieldset>
       {(error || query.error) && <p role="alert">{error || query.error}</p>}
-    </Modal>
+    </Screen>
   );
 }

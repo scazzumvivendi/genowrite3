@@ -7,15 +7,14 @@ in alto puoi modificare autore, genere, descrizione e nome del progetto. Il
 simbolo dell’app apre la raccolta progetti, compreso il cestino recuperabile.
 
 Crea un capitolo con Nuovo elemento e scegli Testo diretto per cominciare subito.
-Volumi, parti e scene sono facoltativi. Puoi creare una cartella organizzativa,
-che non possiede testo proprio e può contenere capitoli o altre cartelle.
+Le scene sono facoltative e appartengono a un capitolo. I progetti precedenti
+vengono semplificati: capitoli alla radice nel loro ordine, vecchi volumi, parti e
+cartelle conservati come note di Biblioteca con i metadati originali.
 
-I gruppi nella navigazione si espandono con il triangolo o da tastiera. Seleziona
-un capitolo o una scena per scrivere. Organizza offre rinomina, stato, sinossi,
-spostamento, posizione tra fratelli, copia e cestino. Il menu contestuale del nodo
-apre le stesse azioni. Per il drag/drop usa il contenitore come destinazione, la
-zona prima del fratello per riordinare o la zona radice; gli spostamenti invalidi
-mostrano un errore. Il form di spostamento è l’alternativa accessibile da tastiera.
+Organizza offre rinomina, sinossi, spostamento, posizione, copia e cestino.
+Il menu contestuale apre le stesse azioni. **Vista globale dei capitoli** mostra
+schede con sinossi: trascinale oppure usa Sposta prima/dopo. Modifica dettagli
+permette di aggiornare la sinossi. La navigazione laterale non usa drag/drop.
 
 ## Capitoli e scene
 
@@ -59,9 +58,10 @@ alternativo che potrebbe far sembrare scomparsi i progetti.
 ## Preferenze e tipografia
 
 Preferenze controlla tema, font locale, dimensione, interlinea, larghezza del
-testo, velocità di lettura, autosave e profilo iniziale DOCX. Salva preferenze
+testo, autosave e profilo iniziale DOCX. Salva preferenze
 conferma le modifiche. L’aspetto dell’editor non modifica il JSON o la formattazione
-DOCX: quest’ultima si sceglie nella finestra di esportazione.
+DOCX: quest’ultima si sceglie nella finestra di esportazione. Interlinea minima 1;
+larghezza massima 2400 px, adattata allo spazio disponibile.
 
 La correzione italiana è attiva inizialmente: digita `e'`/`E'` isolate e uno
 spazio per ottenere `è`/`È`. Backspace rimuove normalmente spazio e lettera;
@@ -84,8 +84,8 @@ cache a partire dal testo.
 Una parola è una sequenza Unicode di lettere/numeri, con apostrofi o trattini
 interni: `l’acqua` conta una parola. Non è una segmentazione linguistica di tutte
 le lingue. I caratteri sono code point Unicode inclusi spazi e newline tra
-paragrafi; grafemi composti possono contare più caratteri. La lettura arrotonda
-per eccesso alla velocità scelta; un testo vuoto vale zero minuti.
+paragrafi; grafemi composti possono contare più caratteri. Non viene mostrato
+un tempo di lettura.
 
 ## Biblioteca e ricerca
 
@@ -102,8 +102,7 @@ cestino proprio con ripristino, senza rimuovere definitivamente i collegamenti.
 ## Esportazione e backup
 
 Esporta apre DOCX, TXT o Backup completo JSON. L’ordine segue il manoscritto. Puoi
-selezionare volumi, parti o capitoli; selezionare un gruppo e un suo discendente
-non duplica il testo. I titoli delle scene sono esclusi inizialmente.
+selezionare capitoli; le scene sono incluse nel loro ordine. I titoli delle scene sono esclusi inizialmente.
 
 Il DOCX supporta un profilo manoscritto e uno personalizzato con font, punti,
 interlinea, margini, rientro, spazio paragrafi, titoli, page break, intestazione,
@@ -124,16 +123,39 @@ scritture parziali. Non si importano i formati di Genowrite 1/2 o file Word.
 
 Per preparare l’offline apri almeno una volta la build di produzione in rete,
 lasciando completare il caricamento. Mantieni lo stesso indirizzo e profilo.
-Puoi installare l’app se il browser offre Installa Genowrite o attraverso il suo
-menu. L’offline comprende anche la generazione degli export.
+Puoi installare l’app da Preferenze → Installa Genowrite quando il browser offre
+il comando, oppure attraverso il menu del browser. L’offline comprende anche la generazione degli export.
 
 Un aggiornamento mostra Salva e aggiorna; non ricarica automaticamente. Se il
 salvataggio non riesce, l’aggiornamento resta sospeso. In modalità Zen rimangono
-app bar e statistiche; i pannelli e la toolbar si ripristinano uscendo. Sui
+barra di formattazione e statistiche, con comando di uscita. La barra principale
+e i pannelli si ripristinano uscendo. Sui
 viewport stretti i pannelli occupano spazio dedicato sopra l’editor, senza coprirlo.
 
 I dati del browser non sono un archivio permanente: la cancellazione dei dati del
 sito, la modalità privata o politiche di evizione possono rimuoverli. Non cambiare
-origine pensando di accedere allo stesso archivio. Non c’è cloud sync, account,
-telemetria, AI o controllo remoto di grammatica. I gate manuali del rilascio sono
+origine pensando di accedere allo stesso archivio. Dropbox è opzionale; non ci sono account Genowrite, telemetria, AI o controllo
+remoto di grammatica. I gate manuali del rilascio sono
 riportati nella checklist, compresa la prova in Microsoft Word.
+
+## Dropbox
+
+Dal pulsante Dropbox apri la schermata dedicata. Collega l’account una volta:
+il collegamento resta sul dispositivo fino a scollegamento o revoca. Mostra
+backup Dropbox elenca i progetti; scegli un progetto per vedere data, dimensione
+e file delle versioni. Un backup ordinario si ripristina come nuovo progetto.
+
+Attiva sincronizzazione automatica per condividere il progetto tra dispositivi.
+Sull’altro dispositivo, da Ripristina backup → Mostra backup Dropbox, scegli il
+file `current` e **Apri come progetto sincronizzato**. Mantiene l’identità del
+progetto; non usarlo se vuoi creare una copia indipendente. L’app controlla ogni
+minuto con progetto aperto e scheda visibile; Controlla e sincronizza ora forza
+un confronto. Il backup periodico è un’opzione separata che conserva copie storiche.
+
+Modifiche indipendenti vengono unite quando possibile, anche nello stesso testo.
+Se si sovrappongono, la sincronizzazione va in pausa: puoi ripristinare una copia
+remota separata, unire i testi manualmente oppure scegliere la copia locale o
+Dropbox. Quest’ultima scelta chiede conferma e conserva entrambe nelle copie di
+recupero scaricabili. Una copia locale è conservata anche prima di ricevere un
+aggiornamento remoto. Recuperi e collegamento sono locali a questo browser.
+La chiusura dell’app interrompe backup e sync; scrittura ed export restano offline.

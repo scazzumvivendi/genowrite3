@@ -64,8 +64,7 @@ it('duplica contenuto indipendente; conserva collegamenti dopo spostamento e ces
       reference,
     );
     expect((await readProject(database, id)).relations[0]!.id).toBe(linkId);
-    const folder = await projects.addNode(id, null, 'folder', 'Cartella');
-    await projects.moveNode(id, chapter, folder, 0);
+    await projects.moveNode(id, chapter, null, 1);
     expect((await readProject(database, id)).relations[0]?.targetId).toBe(
       chapter,
     );

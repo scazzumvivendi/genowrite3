@@ -1,7 +1,7 @@
 import { t } from '../../i18n';
 import { db, type GenowriteDatabase } from '../../database/db';
 import { exportBackup, parseBackup } from '../backup/backup';
-import { dropboxToken } from './auth';
+import { dropboxConnected } from './auth';
 import { uploadDropboxBackup } from './files';
 
 export interface AutomaticBackup {
@@ -25,7 +25,7 @@ export async function setAutomatic(
   enabled: boolean,
   database = db,
 ) {
-  if (enabled && !dropboxToken()) {
+  if (enabled && !dropboxConnected()) {
     throw new Error(
       t('collega_dropbox_prima_di_attivare_il_backup_automatico_66091b'),
     );
@@ -58,7 +58,7 @@ export async function automaticBackupTick(
     if (!project || project.deletedAt) {
       return;
     }
-    if (!dropboxToken()) {
+    if (!dropboxConnected()) {
       throw new Error(
         t(
           'collega_nuovamente_dropbox_per_riprendere_il_backup_automatico_79ee1d',

@@ -14,7 +14,7 @@ export function ProjectNavigation({
   onClose,
   onCreate,
   onManage,
-  onMove,
+  onBoard,
   onContext,
   onLibrary,
   onSearch,
@@ -25,7 +25,7 @@ export function ProjectNavigation({
   onClose: () => void;
   onCreate: () => void;
   onManage: () => void;
-  onMove: (id: string, parentId: string | null, index: number) => void;
+  onBoard: () => void;
   onContext: (id: string) => void;
   onLibrary: (kind: LibraryKind) => void;
   onSearch: () => void;
@@ -35,29 +35,7 @@ export function ProjectNavigation({
     return (
       <ul>
         {childrenOf(nodes, parentId).map((node) => (
-          <li key={node.id}>
-            <div
-              className="drop-before"
-              onDragOver={(event) => event.preventDefault()}
-              onDrop={(event) => {
-                event.preventDefault();
-                event.stopPropagation();
-                const movingId = event.dataTransfer.getData(
-                  'application/genowrite-node',
-                );
-                const siblings = childrenOf(nodes, node.parentId).filter(
-                  (item) => item.id !== movingId,
-                );
-                onMove(
-                  movingId,
-                  node.parentId,
-                  siblings.findIndex((item) => item.id === node.id),
-                );
-              }}
-              aria-hidden="true"
-            />
-            {row(node)}
-          </li>
+          <li key={node.id}>{row(node)}</li>
         ))}
       </ul>
     );
@@ -66,20 +44,6 @@ export function ProjectNavigation({
     const button = (
       <button
         className="document-link"
-        draggable
-        onDragStart={(event) =>
-          event.dataTransfer.setData('application/genowrite-node', node.id)
-        }
-        onDragOver={(event) => event.preventDefault()}
-        onDrop={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          onMove(
-            event.dataTransfer.getData('application/genowrite-node'),
-            node.id,
-            childrenOf(nodes, node.id).length,
-          );
-        }}
         onContextMenu={(event) => {
           event.preventDefault();
           onContext(node.id);
@@ -91,14 +55,10 @@ export function ProjectNavigation({
         <span>{node.title}</span>
       </button>
     );
-    if (
-      ['volume', 'part', 'folder'].includes(node.type) ||
-      node.mode === 'scenes'
-    ) {
+    if (node.mode === 'scenes') {
       return (
         <details open>
-          <summary>{node.title}</summary>
-          {button}
+          <summary>{button}</summary>
           {branch(node.id)}
         </details>
       );
@@ -135,26 +95,13 @@ export function ProjectNavigation({
           <button className="tonal" onClick={onCreate}>
             {t('nuovo_elemento_8c610b')}
           </button>
+          <button onClick={onBoard}>{t('board.title')}</button>
           <button onClick={onManage}>{t('organizza_916b93')}</button>
           <button onClick={onSearch}>{t('cerca_nel_progetto_33398f')}</button>
         </div>
         <nav className="manuscript-list" aria-label={t('manoscritto_bc53cf')}>
           {branch(null)}
         </nav>
-        <div
-          className="root-drop"
-          onDragOver={(event) => event.preventDefault()}
-          onDrop={(event) => {
-            event.preventDefault();
-            onMove(
-              event.dataTransfer.getData('application/genowrite-node'),
-              null,
-              childrenOf(nodes, null).length,
-            );
-          }}
-        >
-          {t('trascina_qui_per_spostare_alla_radice_77519f')}
-        </div>
         <div className="library-preview">
           <p className="section-label">{t('biblioteca_43ea03')}</p>
           {(
@@ -166,15 +113,24 @@ export function ProjectNavigation({
             ] as const
           ).map(([kind, label]) => (
             <button key={kind} onClick={() => onLibrary(kind)}>
+              <Icon
+                name={
+                  kind === 'character'
+                    ? 'people'
+                    : kind === 'location'
+                      ? 'pin'
+                      : kind === 'object'
+                        ? 'object'
+                        : 'note'
+                }
+              />
               {label}
             </button>
           ))}
         </div>
         {!nodes.length && (
           <p className="empty-hint">
-            {t(
-              'inizia_creando_un_capitolo_volumi_parti_e_scene_sono_facoltativi_2fbb6c',
-            )}
+            {t('inizia_con_un_capitolo_il_resto_puo_aspettare_1ea596')}
           </p>
         )}
       </div>

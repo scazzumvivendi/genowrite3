@@ -1,5 +1,6 @@
 import { t } from '../../i18n';
 import { useState } from 'react';
+import { Icon } from '../common/Icon';
 import { useEditorState, type Editor } from '@tiptap/react';
 import { diagnose, type RuleSettings } from '../../modules/rules/engine';
 import { findRanges, textBlocks } from '../../modules/editor/text-ranges';
@@ -42,21 +43,25 @@ export function EditorTools({
     editor.commands.focus();
   }
   return (
-    <div className="editor-tools">
+    <div className="editor-tools" data-open={Boolean(panel)}>
       <div className="editor-tools-heading">
         <button
+          className="icon-button"
+          aria-label={t('trova_e_sostituisci_c56be1')}
           aria-expanded={panel === 'find'}
           onClick={() => setPanel(panel === 'find' ? undefined : 'find')}
         >
-          {t('trova_e_sostituisci_c56be1')}
+          <Icon name="search" />
         </button>
         <button
+          className="icon-button"
+          aria-label={t('editor.diagnostics', { count: visible.length })}
           aria-expanded={panel === 'diagnostics'}
           onClick={() =>
             setPanel(panel === 'diagnostics' ? undefined : 'diagnostics')
           }
         >
-          {t('editor.diagnostics', { count: visible.length })}
+          <Icon name="diagnostics" />
         </button>
       </div>
       {panel === 'find' && (

@@ -52,7 +52,7 @@ test('biblioteca locale, collegamenti, ricerca e duplicazione indipendente', asy
   await expect(page.getByRole('textbox')).toHaveText('Il mare e la città.');
 });
 
-test('drag and drop conserva il testo e rifiuta una destinazione invalida', async ({
+test('bacheca riordina senza perdere testo; navigazione senza trascinamento', async ({
   page,
 }) => {
   await startManuscript(page);
@@ -62,31 +62,24 @@ test('drag and drop conserva il testo e rifiuta una destinazione invalida', asyn
     .first()
     .click();
   const dialog = page.getByRole('dialog', { name: 'Nuovo elemento' });
-  await dialog.getByLabel('Titolo', { exact: true }).fill('Archivio');
-  await dialog
-    .getByRole('combobox', { name: 'Tipo', exact: true })
-    .selectOption('folder');
-  await dialog.getByRole('button', { name: 'Crea elemento' }).click();
-  const navigation = page.getByRole('navigation', {
-    name: 'Manoscritto',
-    exact: true,
-  });
-  const chapter = navigation
-    .locator('button.document-link')
-    .filter({ hasText: /^Capitolo$/ });
-  const folder = navigation
-    .locator('button.document-link')
-    .filter({ hasText: /^Archivio$/ });
-  await chapter.dragTo(folder);
   await expect(
-    navigation
-      .locator('details')
-      .filter({ hasText: 'Archivio' })
-      .getByRole('button', { name: 'Capitolo', exact: true }),
-  ).toBeVisible();
-  await chapter.click();
+    dialog
+      .getByRole('combobox', { name: 'Tipo', exact: true })
+      .locator('option'),
+  ).toHaveCount(2);
+  await dialog.getByLabel('Titolo', { exact: true }).fill('Secondo');
+  await dialog.getByRole('button', { name: 'Crea elemento' }).click();
+  await page
+    .getByRole('button', { name: 'Vista globale dei capitoli' })
+    .click();
+  const cards = page.locator('.chapter-cards > li');
+  await cards.nth(1).getByRole('button', { name: 'Sposta prima' }).click();
+  await expect(cards.first()).toContainText('Secondo');
+  await cards.first().dragTo(cards.nth(1));
+  await expect(cards.first()).toContainText('Capitolo');
+  await cards.first().getByRole('button', { name: 'Apri capitolo' }).click();
   await expect(page.getByRole('textbox')).toHaveText('Testo da spostare.');
-  await folder.dragTo(chapter);
-  await expect(page.getByRole('alert')).toContainText('posizione');
+  await expect(page.locator('.manuscript-list [draggable]')).toHaveCount(0);
+  await page.reload();
   await expect(page.getByRole('textbox')).toHaveText('Testo da spostare.');
 });

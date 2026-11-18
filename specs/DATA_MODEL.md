@@ -29,7 +29,7 @@ Project owns or references manuscript nodes and reference-library entities.
 ## 3. Manuscript node
 
 ```ts
-type NodeType = 'volume' | 'part' | 'chapter' | 'scene' | 'folder';
+type NodeType = 'chapter' | 'scene';
 
 type ManuscriptNode = {
   id: string;
@@ -41,13 +41,12 @@ type ManuscriptNode = {
   createdAt: string;
   updatedAt: string;
   synopsis?: string;
-  status?: 'planned' | 'in_progress' | 'first_draft' | 'revised' | 'final';
   targetWordCount?: number;
   deletedAt?: string;
 };
 ```
 
-A folder is organizational only and must not contain manuscript text. The parent-child matrix is defined in PRODUCT_SPEC.md.
+Chapters are at project root; scenes belong to scene-mode chapters. Previous containers are migrated to library notes, preserving metadata and links.
 
 ## 4. Chapter mode
 

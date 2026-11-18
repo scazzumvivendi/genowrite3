@@ -40,6 +40,23 @@ export function ProjectChooser({
       setError(String(reason));
     }
   }
+  if (restoreDialog) {
+    return (
+      <div
+        className="theme"
+        data-theme={
+          theme === 'dark' || (theme === 'system' && systemDark)
+            ? 'dark'
+            : 'light'
+        }
+      >
+        <RestoreDialog
+          onClose={() => setRestoreDialog(false)}
+          onRestored={onOpen}
+        />
+      </div>
+    );
+  }
   return (
     <div
       className="theme project-chooser"
@@ -50,9 +67,16 @@ export function ProjectChooser({
       }
     >
       <main>
-        <span className="brand-mark">{t('g_fc3a68')}</span>
+        <span className="brand-mark">
+          <img
+            src={`${import.meta.env.BASE_URL}icon.svg`}
+            alt=""
+            width="44"
+            height="44"
+          />
+        </span>
         <p className="section-label">{t('genowrite_3_4ba304')}</p>
-        <h1>{t('uno_spazio_per_le_tue_parole_105d8f')}</h1>
+        <h1>{t('i_tuoi_progetti_03664f')}</h1>
         <p>
           {t(
             'scrivi_e_organizza_i_tuoi_progetti_su_questo_dispositivo_nessun_a_eaff54',
@@ -81,12 +105,6 @@ export function ProjectChooser({
         <button className="tonal" onClick={() => setRestoreDialog(true)}>
           {t('ripristina_backup_597c6e')}
         </button>
-        {restoreDialog && (
-          <RestoreDialog
-            onClose={() => setRestoreDialog(false)}
-            onRestored={onOpen}
-          />
-        )}
         {error && <p role="alert">{error}</p>}
         <div className="panel-heading">
           <h2>

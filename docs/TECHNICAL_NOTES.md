@@ -18,11 +18,13 @@ Editor e generatore DOCX sono caricati su richiesta e inclusi nella cache offlin
 Dexie v1 definisce projects, nodes, documents, references, notes, relations,
 projectSettings e preferences con indici di progetto, genitore, proprietario,
 tipo, ordine e relazioni. La v2 aggiunge statistics e popola la cache dai documenti.
-Il backup è indipendente dallo schema DB: formato `genowrite3`, versione 1.
+La v3 semplifica la struttura e rimuove gli stati; i contenitori diventano note
+con ID e metadati originali, collegamenti rimappati. Upgrade atomico per progetto
+nella transazione di migrazione Dexie. Backup `genowrite3` v2; importazione v1/v2.
 
 UUID e timestamp UTC ISO. Ordine dei fratelli sul campo order, mai sul titolo.
-Matrice centralizzata: project→volume/part/chapter/folder, volume→part/chapter/folder,
-part→chapter/folder, chapter-scenes→scene, scene→nessuno, folder→chapter/folder.
+Matrice corrente: project→chapter, chapter-scenes→scene, scene→nessuno.
+La matrice precedente rimane solo per validare i backup prima della migrazione.
 Gerarchia validata senza cicli e limitata a 64 livelli per evitare ricorsioni
 patologiche. Documenti solo di capitoli diretti o scene, con indice owner unico.
 
@@ -91,3 +93,57 @@ Testi UI, accessibilità, diagnostica ed errori applicativi passano da
 `src/i18n/index.ts` e `src/i18n/it.ts`, con chiavi e parametri verificati da
 TypeScript. Titolo HTML e metadati PWA usano lo stesso catalogo. Non ci sono
 cataloghi inglesi o servizi di traduzione. Vedi [I18N.md](I18N.md).
+
+## Revisione UI — primo blocco
+
+La barra editor contiene anche i comandi di ricerca e diagnostica: EditorTools
+usa il layout della toolbar e rende un pannello a larghezza intera solo quando
+aperto. Zen nasconde il contesto progetto e mantiene formattazione, statistiche
+e uscita. Il prompt PWA è condiviso tramite InstallContext ed esposto nelle
+preferenze; gli avvisi di aggiornamento e gli errori rimangono visibili.
+
+Le preferenze ammettono interlinea 1–2,4 e larghezza 400–2400 px, limitata alla
+viewport. Il tempo di lettura non è più mostrato: il vecchio campo readingSpeed
+rimane compatibile nei dati salvati, senza controllo nell’interfaccia. Gli stati editoriali sono stati successivamente rimossi; il backup passa a v2.
+Nessuna nuova dipendenza.
+
+Verifica: build strict con lint, Prettier e controllo licenze; 54 test unitari;
+14 scenari Chromium per preferenze, installazione simulata, ricerca, diagnostica,
+conteggi, Zen, accessibilità chiaro/scuro e layout da 320 a 1440 px. Controllo
+visivo della schermata Zen. Firefox/WebKit e installazione reale non verificati
+in questo blocco.
+
+## Dropbox, merge e pipeline
+
+Vedi [DROPBOX.md](DROPBOX.md). Il merge è puro, con base comune e confronto per ID;
+ignora revision e updatedAt solo nei record delle collezioni del progetto,
+non nei campi utente, anche se contengono una chiave id.
+Array ricchi con struttura uguale vengono confrontati ricorsivamente; cambi di
+struttura e stringhe provano l’unione di intervalli distinti. I casi ambigui
+producono conflitti, senza marcatori inseriti nel manoscritto. Il risultato deve
+superare la validazione dello snapshot. Nessuna fusione garantita di ogni edit.
+
+Upload del file corrente con revisione Dropbox e strict_conflict; niente overwrite
+incondizionato. Copie locali di recupero in preferences, scaricabili da Dropbox.
+Applicazione locale atomica con confronto dello snapshot atteso e breve blocco
+dell’editor; ultima bozza salvata prima di scrivere. Una generation locale, letta
+insieme allo snapshot, rimonta l’editor solo per gli aggiornamenti remoti. Web Locks
+impediscono tick sovrapposti tra schede; fallback in memoria dove non disponibili.
+Gli errori di rete non rimuovono refresh token; invalid_grant/scollegamento sì.
+
+CI: quality costruisce e controlla una volta, carica dist/dist-pages come artefatto;
+tre job browser paralleli scaricano la stessa build e installano solo il browser
+necessario. Chromium include la prova dev. deploy-pages attende quality e tutti
+i browser, pubblicando lo stesso dist-pages già testato. Nessuna riduzione della
+copertura; tempi remoti da misurare dopo il push.
+
+## Logo approvato
+
+`public/icon.svg` deriva dalla proposta 2 approvata: cappello `#102A43` pieno,
+righe `#E3EBF2` e risvolto a libro. Una base chiara mantiene leggibilità anche
+su sfondi scuri. Lo stesso asset è usato nella raccolta progetti e nella barra
+principale. `npm run icons` usa il Chromium di Playwright già presente tra le
+dipendenze di sviluppo per produrre PNG 180, 192 e 512 px, senza nuove dipendenze.
+Il manifest, il tema del browser e l’icona Apple sono aggiornati e inclusi nel
+precache. Il service worker cerca prima nella cache corrente, conservando il
+fallback alle vecchie risorse per le altre schede ancora aperte.

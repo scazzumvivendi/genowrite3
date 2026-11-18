@@ -77,6 +77,9 @@ test('Dropbox: esportazione esplicita, anteprima e importazione indipendente', a
     .getByRole('textbox', { name: 'Testo · Capitolo cloud' })
     .fill('Ultime parole da conservare.');
   await page.getByRole('button', { name: 'Esporta', exact: true }).click();
+  await page
+    .getByRole('button', { name: 'Backup e Dropbox', exact: true })
+    .click();
   expect(exported).toBe('');
   await page
     .getByRole('button', { name: 'Esporta su Dropbox', exact: true })
@@ -92,6 +95,11 @@ test('Dropbox: esportazione esplicita, anteprima e importazione indipendente', a
     .getByRole('button', { name: 'Ripristina backup', exact: true })
     .click();
   await page.getByRole('button', { name: 'Mostra backup Dropbox' }).click();
+  await page
+    .locator('.backup-projects button')
+    .filter({ hasText: 'Copia' })
+    .click();
+  await expect(page.getByRole('table')).toBeVisible();
   await page
     .getByRole('button', { name: 'Copia.genowrite3.json', exact: true })
     .click();

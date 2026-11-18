@@ -24,6 +24,7 @@ export function LocalTopBar({
   onExport,
   onDropbox,
   dropboxActive,
+  syncActive,
 }: {
   projectTitle: string;
   title: string;
@@ -40,6 +41,7 @@ export function LocalTopBar({
   onExport: () => void;
   onDropbox: () => void;
   dropboxActive: boolean;
+  syncActive: boolean;
 }) {
   return (
     <header className="top-bar product-top-bar">
@@ -116,25 +118,27 @@ export function LocalTopBar({
         </button>
         <button
           type="button"
+          className="icon-button dropbox-button"
+          data-active={dropboxActive || syncActive}
           onClick={onDropbox}
           aria-label={t('dropbox_4750d0')}
           title={
-            dropboxActive
-              ? t('backup_dropbox_automatico_attivo_2b04ad')
-              : t('backup_dropbox_59f66f')
+            syncActive
+              ? t('sync.enabledHint')
+              : dropboxActive
+                ? t('backup_dropbox_automatico_attivo_2b04ad')
+                : t('backup_dropbox_59f66f')
           }
         >
-          {t('dropbox_4750d0')}
-          {dropboxActive ? t('auto_e19d2c') : ''}
+          <Icon name="dropbox" />
         </button>
         <button
-          className="export-button"
+          className="icon-button"
           onClick={onExport}
           aria-label={t('esporta_2c4c51')}
           title={t('esporta_e_crea_backup_287741')}
         >
           <Icon name="export" />
-          <span>{t('esporta_2c4c51')}</span>
         </button>
       </div>
     </header>

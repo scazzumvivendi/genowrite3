@@ -1,6 +1,4 @@
 import { t } from '../../i18n';
-import { writingStatusLabels } from '../../modules/manuscript/status';
-import type { WritingStatus } from '../../modules/manuscript/model';
 import { duplicateNode } from '../../modules/manuscript/duplicate';
 import { useState } from 'react';
 import type {
@@ -99,11 +97,8 @@ export function NodeDialog({
                 setParentId('');
               }}
             >
-              <option value="volume">{t('volume_b10fb9')}</option>
-              <option value="part">{t('parte_2d03d9')}</option>
               <option value="chapter">{t('capitolo_288e49')}</option>
               <option value="scene">{t('scena_48829c')}</option>
-              <option value="folder">{t('cartella_2e95e4')}</option>
             </select>
           </label>
           <label>
@@ -147,7 +142,6 @@ export function NodeDialog({
                     await projectService.updateNode(projectId, node.id, {
                       title: String(data.get('title')),
                       synopsis: String(data.get('synopsis')),
-                      status: String(data.get('status')) as WritingStatus,
                     });
                     onDone(node.id);
                   });
@@ -161,18 +155,6 @@ export function NodeDialog({
                     required
                     maxLength={500}
                   />
-                </label>
-                <label>
-                  {t('stato_5d7880')}
-                  <select name="status" defaultValue={node.status}>
-                    {Object.entries(writingStatusLabels).map(
-                      ([value, label]) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ),
-                    )}
-                  </select>
                 </label>
                 <label>
                   {t('sinossi_a1336d')}

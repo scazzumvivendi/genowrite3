@@ -42,7 +42,7 @@ it('PKCE usa S256 e non include segreti; il redirect segue la base Vite', async 
     vi.mocked(window.location.assign).mock.calls[0]![0] as string,
   );
   expect(url.searchParams.get('code_challenge_method')).toBe('S256');
-  expect(url.searchParams.get('token_access_type')).toBe('online');
+  expect(url.searchParams.get('token_access_type')).toBe('offline');
   expect(url.searchParams.has('client_secret')).toBe(false);
   expect(url.searchParams.get('redirect_uri')).toBe(auth.redirectUri());
   expect(new URL(auth.redirectUri()).pathname).toBe(
@@ -181,4 +181,44 @@ it('esporta una copia completa senza sovrascrivere, header Unicode valido e impo
   } finally {
     await database.delete();
   }
+});
+
+it('refresh persistente condiviso tra richieste; offline conserva credenziali, revoca le elimina', async () => {
+  const persistent = new Map<string, string>();
+  vi.stubGlobal('localStorage', {
+    getItem: (key: string) => persistent.get(key) ?? null,
+    setItem: (key: string, value: string) => persistent.set(key, value),
+    removeItem: (key: string) => persistent.delete(key),
+  });
+  const expired = JSON.stringify({
+    accessToken: 'old',
+    expiresAt: 0,
+    refreshToken: 'refresh',
+  });
+  persistent.set('genowrite3.dropbox.token', expired);
+  const auth = await import('./auth');
+  const fetcher = vi
+    .fn()
+    .mockResolvedValue(
+      Response.json({ access_token: 'new', expires_in: 3600 }),
+    );
+  vi.stubGlobal('fetch', fetcher);
+  expect(auth.dropboxConnected()).toBe(true);
+  expect(
+    await Promise.all([auth.validDropboxToken(), auth.validDropboxToken()]),
+  ).toEqual(['new', 'new']);
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  expect(String(fetcher.mock.calls[0]![1].body)).toContain(
+    'grant_type=refresh_token',
+  );
+  expect(String(fetcher.mock.calls[0]![1].body)).not.toContain('client_secret');
+  persistent.set('genowrite3.dropbox.token', expired);
+  fetcher.mockRejectedValueOnce(new TypeError('offline'));
+  await expect(auth.validDropboxToken()).rejects.toThrow();
+  expect(auth.dropboxConnected()).toBe(true);
+  fetcher.mockResolvedValueOnce(
+    Response.json({ error: 'invalid_grant' }, { status: 400 }),
+  );
+  await expect(auth.validDropboxToken()).rejects.toThrow();
+  expect(auth.dropboxConnected()).toBe(false);
 });

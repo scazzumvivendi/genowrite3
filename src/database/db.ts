@@ -1,4 +1,6 @@
 import { t } from '../i18n';
+import { simplifyManuscript } from '../modules/manuscript/migrate';
+import { validateSnapshot } from '../modules/manuscript/validation';
 import { countContent, type CachedCounts } from '../modules/statistics/counts';
 import Dexie, { type Table } from 'dexie';
 import type {
@@ -50,6 +52,26 @@ export class GenowriteDatabase extends Dexie {
             ...countContent(document.content),
           })),
         );
+      });
+    this.version(3)
+      .stores({})
+      .upgrade(async (transaction) => {
+        for (const project of await transaction
+          .table<Project>('projects')
+          .toArray()) {
+          const snapshot = await readProject(this, project.id);
+          validateSnapshot(snapshot, true);
+          simplifyManuscript(snapshot);
+          validateSnapshot(snapshot);
+          await transaction
+            .table('nodes')
+            .where('projectId')
+            .equals(project.id)
+            .delete();
+          await transaction.table('nodes').bulkPut(snapshot.nodes);
+          await transaction.table('notes').bulkPut(snapshot.notes);
+          await transaction.table('relations').bulkPut(snapshot.relations);
+        }
       });
   }
   get projectTables() {

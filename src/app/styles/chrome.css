@@ -1,9 +1,9 @@
 /* Fase 1: la griglia riserva spazio ai pannelli e alle statistiche. */
 .writing-shell {
-  --outline-variant: #ddd7e3;
-  --page: #fffbff;
-  --surface-low: #f8f2fb;
-  --primary-container: #eaddff;
+  --outline-variant: #d3dce8;
+  --page: #fbfcff;
+  --surface-low: #eef3f9;
+  --primary-container: #dce7f5;
   height: 100dvh;
   min-height: 0;
   display: grid;
@@ -13,10 +13,10 @@
   line-height: 1.5;
 }
 .writing-shell[data-theme='dark'] {
-  --outline-variant: #413b48;
-  --page: #19161e;
-  --surface-low: #1c1921;
-  --primary-container: #4f378b;
+  --outline-variant: #3d4957;
+  --page: #151c25;
+  --surface-low: #192330;
+  --primary-container: #29476b;
 }
 .writing-shell h1,
 .writing-shell h2,
@@ -65,16 +65,13 @@
   justify-content: center;
   align-items: center;
   border-radius: 14px;
-  color: var(--on-primary);
-  background: var(--primary);
-  font:
-    italic 32px/1 Georgia,
-    serif;
-  letter-spacing: -4px;
-  padding-right: 5px;
+  background: transparent;
+  padding: 0;
 }
-.brand-mark span {
-  color: var(--secondary-container);
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
 }
 .project-context {
   min-width: 0;

@@ -1,5 +1,4 @@
 import { t } from '../../i18n';
-import { DropboxPanel } from '../dropbox/DropboxPanel';
 import { useState } from 'react';
 import { db, readProject } from '../../database/db';
 import type { ProjectSnapshot } from '../../modules/manuscript/model';
@@ -23,11 +22,13 @@ export function ExportDialog({
   flush,
   onClose,
   defaultProfile,
+  onDropbox,
 }: {
   snapshot: ProjectSnapshot;
   flush: () => Promise<void>;
   onClose: () => void;
   defaultProfile: 'manuscript' | 'custom';
+  onDropbox: () => void;
 }) {
   const [format, setFormat] = useState('docx');
   const [options, setOptions] = useState<ExportOptions>(defaultExportOptions);
@@ -146,12 +147,9 @@ export function ExportDialog({
       onClose={onClose}
       protectContent={false}
     >
-      <DropboxPanel
-        prepareExport={async () => {
-          await flush();
-          return exportBackup(db, snapshot.project.id);
-        }}
-      />
+      <button type="button" onClick={onDropbox}>
+        {t('dropbox.screen')}
+      </button>
       <form
         onSubmit={(event) => {
           event.preventDefault();

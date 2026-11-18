@@ -55,3 +55,10 @@ IndexedDB v3. La matrice precedente è conservata solo per validare dati da migr
 Per la CI i browser vengono eseguiti in job paralleli: stessi controlli, tempi
 effettivi da misurare su GitHub. Per Dropbox la console e il collegamento reale
 restano una verifica manuale; automazione e merge sono verificati con API simulate.
+
+## Riduzione CI autorizzata — 18 novembre 2026
+
+Dopo il timeout di 5 minuti, il percorso ordinario mantiene build e test
+unitari/integrativi essenziali ed esclude installazione browser ed E2E.
+La matrice completa resta disponibile manualmente con `full_browser_tests`;
+quando richiesta, deve passare prima del deploy.

@@ -95,9 +95,12 @@ PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npm run check
 ```
 
 Gli E2E usano la build di produzione servita sulla porta 4173: eseguire prima la
-build. `test:dev` avvia e verifica anche Vite dev sulla porta 5175. CI predisposta
-per gli stessi gate e i tre browser; il runner remoto non è stato eseguito in
-questa sessione.
+build. `test:dev` avvia e verifica anche Vite dev sulla porta 5175.
+La CI ordinaria esegue build strict, lint, formattazione, licenze e test
+unitari/integrativi, senza installare browser. Per gli E2E completi, avviare
+**Quality gates → Run workflow** con **full_browser_tests** attivo: esegue
+Chromium, Firefox, WebKit, prova dev e Pages; su `main` il deploy attende
+anche questi test. I tempi remoti restano da verificare.
 
 ## Testi e lingua
 
@@ -126,11 +129,7 @@ Il logo approvato è il cappello blu notte con righe chiare e risvolto a libro,
 applicato a interfaccia, favicon e icone PWA/Apple. Sorgente: `public/icon.svg`;
 `npm run icons` rigenera i PNG locali tramite Chromium (dipendenza di sviluppo).
 Le proposte precedenti restano in [anteprima](design/logo-proposals.html).
-La CI distribuisce i browser in tre job paralleli e pubblica solo dopo tutti i
-controlli; il nuovo tempo remoto va misurato alla prossima esecuzione GitHub.
-Per contenere consumi e download, parte sui push a `main` e sulle pull request,
-usa Ubuntu 24.04, installa solo il browser necessario (solo headless shell per
-Chromium) e interrompe l’installazione dopo 5 minuti. I risultati diagnostici
-sono caricati solo in caso di errore e conservati per un giorno.
-L’installazione npm privilegia la cache; al primo browser fallito vengono
-interrotti gli altri job della matrice, evitando lavoro che non può portare al deploy.
+La CI parte sui push a `main`, sulle pull request e su avvio manuale.
+La suite browser completa è opzionale per evitare che il download dei browser
+blocchi la pubblicazione ordinaria. I risultati diagnostici sono caricati solo
+in caso di errore e conservati per un giorno.

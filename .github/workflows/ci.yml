@@ -4,6 +4,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      full_browser_tests:
+        description: Esegui la suite completa Chromium, Firefox e WebKit
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -45,6 +50,7 @@ jobs:
         with:
           path: dist-pages
   browsers:
+    if: github.event_name == 'workflow_dispatch' && inputs.full_browser_tests
     needs: quality
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -78,7 +84,11 @@ jobs:
           path: test-results/
           retention-days: 1
   deploy-pages:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: >-
+      always() && !cancelled() &&
+      github.ref == 'refs/heads/main' && github.event_name != 'pull_request' &&
+      needs.quality.result == 'success' &&
+      (needs.browsers.result == 'success' || needs.browsers.result == 'skipped')
     needs: [quality, browsers]
     runs-on: ubuntu-24.04
     timeout-minutes: 10

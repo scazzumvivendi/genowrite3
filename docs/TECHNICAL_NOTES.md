@@ -131,23 +131,16 @@ insieme allo snapshot, rimonta l’editor solo per gli aggiornamenti remoti. Web
 impediscono tick sovrapposti tra schede; fallback in memoria dove non disponibili.
 Gli errori di rete non rimuovono refresh token; invalid_grant/scollegamento sì.
 
-CI: quality costruisce e controlla una volta, carica dist/dist-pages come artefatto;
-tre job browser paralleli scaricano la stessa build e installano solo il browser
-necessario. Chromium include la prova dev. deploy-pages attende quality e tutti
-i browser, pubblicando lo stesso dist-pages già testato. Nessuna riduzione della
-copertura; tempi remoti da misurare dopo il push.
+CI ordinaria: `quality` esegue build strict, lint, formattazione, licenze e
+unit/integration test, poi prepara gli artefatti standard e Pages. Non installa
+browser. `deploy-pages` su main richiede quality riuscito e accetta browsers
+saltato. Per la suite completa usare workflow_dispatch con `full_browser_tests`:
+i tre browser girano in parallelo, Chromium include dev e tutti verificano Pages;
+in questo caso qualsiasi errore browser impedisce il deploy.
 
-Contenimento consumi CI: push solo su main, pull request e avvio manuale;
-runner fissati a Ubuntu 24.04. Installazione browser limitata a 5 minuti,
-job quality/browser/deploy rispettivamente a 15/20/10 minuti. Chromium scarica
-solo la headless shell; nessuna cache aggiuntiva dei binari browser. La seconda
-build, per Pages, esegue solo Vite dopo i controlli strict già completati.
-Artefatti diagnostici solo su errore, retention di un giorno; build condivise
-già limitate a un giorno. Il piano e le quote dell’account non sono verificati.
-`npm ci --prefer-offline` riutilizza la cache npm già configurata senza controlli
-di freschezza superflui. La matrice usa fail-fast: il primo browser fallito
-interrompe i job fratelli, dato che il deploy richiede comunque tutti i gate.
-Le esecuzioni riuscite mantengono tutti i test sui tre browser.
+Runner Ubuntu 24.04; cache npm, build condivise e diagnostica su errore conservate
+un giorno. Il timeout installazione browser di 5 minuti rimane solo nel percorso
+manuale completo. Nessuna garanzia di durata totale finché non misurata sul runner.
 
 ## Logo approvato
 

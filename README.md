@@ -139,3 +139,10 @@ progetti puoi spostare un progetto nel cestino dopo conferma e ripristinarlo
 con tutti i contenuti. Il check verde sull’icona Dropbox indica backup automatico
 o sincronizzazione attivi; un punto esclamativo segnala problemi o divergenze.
 Per verificare l’allineamento e gestire eventuali conflitti apri Dropbox.
+
+La home **Genowrite 3** raccoglie i progetti in schede con autore, descrizione,
+genere e data di modifica. Permette ricerca per titolo/autore/genere,
+ordinamento per ultima modifica o titolo, modifica delle proprietà, creazione,
+ripristino JSON e cestino recuperabile. Il logo nella barra di scrittura torna
+alla gestione progetti; il ritorno alla home viene ricordato al ricaricamento.
+I pulsanti usano superfici grigie coerenti nei temi chiaro e scuro.

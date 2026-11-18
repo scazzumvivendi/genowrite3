@@ -59,7 +59,9 @@ function LocalArchive({
     () => session?.projectId ?? null,
   );
   const [sessionError, setSessionError] = useState('');
-  const selected = data.projects.find((project) => project.id === selection);
+  const selected = data.projects.find(
+    (project) => project.id === selection && !project.deletedAt,
+  );
   const error = readError || sessionError;
   if (!selected) {
     return (
@@ -92,7 +94,12 @@ function LocalArchive({
         session?.projectId === selected.id ? session.nodeId : undefined
       }
       preferences={data.preferences}
-      onProjects={() => setSelection(null)}
+      onProjects={() => {
+        setSelection(null);
+        void db.preferences
+          .put({ id: 'session', value: {} })
+          .catch((reason: unknown) => setSessionError(String(reason)));
+      }}
       externalError={error || undefined}
     />
   );

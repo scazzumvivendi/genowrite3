@@ -77,3 +77,11 @@ quando richiesta, deve passare prima del deploy.
   restano separati dal ripristino come nuova copia.
 - Cancellazione dalla home con conferma e cestino recuperabile, senza eliminazione
   definitiva dei contenuti o dei backup remoti.
+
+## Gestione progetti — revisione home
+
+La richiesta successiva autorizza pulsanti grigi coerenti con le superfici,
+identità Genowrite 3 visibile nella home e nella barra desktop, schede progetto,
+ricerca locale per titolo/autore/genere e ordinamento per ultima modifica o titolo.
+Le proprietà sono accessibili anche dalla home. Il ritorno ai progetti azzera la
+selezione persistita senza modificare i contenuti; il cestino resta recuperabile.

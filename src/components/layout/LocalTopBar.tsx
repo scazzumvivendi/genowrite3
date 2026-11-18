@@ -61,6 +61,7 @@ export function LocalTopBar({
             height="44"
           />
         </button>
+        <div className="workspace-brand-name">{t('home.brand')}</div>
         <div className="project-context">
           <button
             className="project-title-button"

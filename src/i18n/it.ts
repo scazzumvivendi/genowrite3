@@ -1,5 +1,21 @@
 // Catalogo italiano. Non riutilizzare gli identificatori per messaggi diversi.
 export const it = {
+  'home.brand': 'Genowrite 3',
+  'home.subtitle': 'Il tuo spazio di scrittura',
+  'home.new': 'Inizia un nuovo progetto',
+  'home.newHint': 'Un romanzo, un saggio o una nuova idea.',
+  'home.search': 'Cerca progetti',
+  'home.sort': 'Ordina per',
+  'home.recent': 'Ultima modifica',
+  'home.count': '{count} di {total} progetti',
+  'home.updated': 'Modificato il',
+  'home.noResults': 'Nessun risultato',
+  'home.searchHint': 'Prova con un altro titolo, autore o genere.',
+  'home.empty': 'La tua biblioteca comincia qui',
+  'home.emptyHint': 'Crea il primo progetto oppure ripristina un backup JSON.',
+  'home.emptyTrash': 'Il cestino è vuoto',
+  'home.trashHint': 'I progetti spostati qui possono essere ripristinati.',
+
   'sync.source': 'Origine',
   'sync.thisDevice': 'Questo dispositivo',
   'sync.enabledHint': 'Sincronizzazione Dropbox attiva',

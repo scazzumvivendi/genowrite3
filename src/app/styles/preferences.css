@@ -39,8 +39,8 @@
   border-color: transparent;
 }
 .filled-button {
-  background: var(--secondary-container);
-  color: var(--on-secondary-container);
+  background: transparent;
+  color: var(--on-surface);
   padding: 0 24px;
   float: right;
 }

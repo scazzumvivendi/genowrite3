@@ -52,8 +52,8 @@ button {
   padding: 8px 16px;
   border-radius: var(--shape-medium);
   min-height: 44px;
-  background: var(--surface-container);
-  color: var(--on-surface);
+  background: transparent;
+  color: inherit;
   font:
     500 14px/20px system-ui,
     sans-serif;

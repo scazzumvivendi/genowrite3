@@ -85,3 +85,8 @@ identità Genowrite 3 visibile nella home e nella barra desktop, schede progetto
 ricerca locale per titolo/autore/genere e ordinamento per ultima modifica o titolo.
 Le proprietà sono accessibili anche dalla home. Il ritorno ai progetti azzera la
 selezione persistita senza modificare i contenuti; il cestino resta recuperabile.
+
+## Colori pulsanti — ripristino
+
+I pulsanti ordinari riprendono lo sfondo della superficie su cui si trovano,
+come nella versione iniziale. Il grigio distinto resta per gli stati selezionati.

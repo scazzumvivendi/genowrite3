@@ -19,6 +19,7 @@ export function PwaBoundary({ children }: { children: ReactNode }) {
     void navigator.serviceWorker
       .register(`${import.meta.env.BASE_URL}sw.js`, {
         scope: import.meta.env.BASE_URL,
+        updateViaCache: 'none',
       })
       .then((registration) => {
         if (disposed || !registration) {

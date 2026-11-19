@@ -33,6 +33,11 @@ export function offlinePlugin(): Plugin {
       const version = createHash('sha256')
         .update(
           JSON.stringify(assets) +
+            Object.values(bundle)
+              .map((entry) =>
+                entry.type === 'chunk' ? entry.code : entry.source,
+              )
+              .join('') +
             publicAssets
               .map((name) =>
                 name === 'manifest.webmanifest'
@@ -52,7 +57,10 @@ const CACHE = PREFIX + '${version}';
 const BASE = ${JSON.stringify(base)};
 const ASSETS = ${JSON.stringify(assets)};
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+  // Non mescolare HTML della cache HTTP con i chunk del nuovo deploy.
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(
+    ASSETS.map(path => new Request(path, { cache: 'reload' }))
+  )));
 });
 self.addEventListener('message', event => {
   if (event.data === 'ACTIVATE_UPDATE') self.skipWaiting();

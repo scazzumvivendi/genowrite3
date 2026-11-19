@@ -60,7 +60,8 @@ Per passare da un’origine all’altra usa backup e ripristino JSON.
   responsive e Zen. Statistiche senza controllo di nascondimento.
   Card di progetti e capitoli e stati selezionati condividono il colore del menu Manoscritto.
 - PWA con tutti gli asset locali in precache e aggiornamento esplicito dopo
-  salvataggio; nessun reload automatico mentre si scrive.
+  salvataggio; nessun reload automatico mentre si scrive. Il precache degli
+  aggiornamenti esclude la cache HTTP per evitare HTML obsoleto e chunk in 404.
 
 Leggi la [guida d’uso](docs/USER_GUIDE.md) per i flussi e i limiti. Il browser può
 rimuovere i dati del sito: conserva regolarmente backup fuori dal browser.

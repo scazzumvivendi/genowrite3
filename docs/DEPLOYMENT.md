@@ -57,6 +57,11 @@ Il manifest usa percorsi relativi; scope e start URL restano nella directory
 dell’app. Il precache include tutti gli asset locali, compreso il generatore DOCX.
 Il worker limita gestione delle richieste e pulizia delle cache al proprio
 percorso. L’aggiornamento rimane esplicito, dopo salvataggio delle bozze.
+Il precache ricarica HTML e asset dalla rete senza riutilizzare la cache HTTP:
+un HTML precedente potrebbe riferirsi a chunk rimossi dal nuovo deploy e causare
+404 all’apertura. La versione della cache include anche il contenuto della build;
+la verifica degli aggiornamenti del worker esclude la cache HTTP. IndexedDB non
+viene cancellato e le risorse già installate restano disponibili offline.
 
 IndexedDB conserva i manoscritti nel browser; il deploy contiene solo asset.
 Localhost e `scazzumvivendi.github.io` hanno archivi diversi: usare backup JSON e
